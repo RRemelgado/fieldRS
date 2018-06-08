@@ -26,7 +26,6 @@
 #'  \item{\emph{overall.validation} - Finally accuracy value for each class (if "classification").}
 #'  \item{\emph{r2 - Correlation between \emph{y} and the predicted values (if "regression")}}}}
 #' @seealso \code{\link{splitSamples}} \code{\link{ccLabel}} \code{\link{classFilter}}
-#' @examples {}
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -55,7 +54,7 @@ classModel <- function(x, y, z, mode="classification", method="rf") {
     unique.y <- unique(y) # unique classes
     n <- 1:nrow(x) # base index
     v <- vector('logical', length(n)) # individual sample validation
-    a <- vector('numeric', lengt(unique.y)) # clas-wise validation
+    a <- vector('numeric', length(unique.y)) # clas-wise validation
 
     for (c in 1:length(unique.y)) {
 
@@ -76,7 +75,7 @@ classModel <- function(x, y, z, mode="classification", method="rf") {
 
     # make plot with accuracies
     odf <- data.frame(class=unique.y, accuracy=a, stringsAsFactors=TRUE)
-    p <- ggplot(odf, aes_string(x=class, y=accuracy)) + theme_bw() + ylim(0,1)
+    p <- ggplot(odf, aes_string(x="class", y="accuracy")) + theme_bw() + ylim(0,1)
 
     # derive output
     return(list(sample.validation=v, overall.validation=odf))

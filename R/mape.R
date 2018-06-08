@@ -7,8 +7,13 @@
 #' @details {Estimates the Mean Absolute Percent Error (MAPE) for a given vector. The MAPE compares the individual values against their mean and
 #' translates the mean of the differences into a percent deviation from the mean of the vector. The MAPE is estimated as:
 #' \deqn{100 / length(x) * sum(abs((x-mean(x))/x))}}
-#' @seealso \code{\link{}}
-#' @examples {relative.freq}
+#' @seealso \code{\link{relative.freq}} \code{\link{ccLabel}}
+#' @examples {
+#' 
+#' x <- c(0.1, 0.3, 0.4, 0.1, 0.2, 0.6)
+#' m <- mape(x)
+#' 
+#' }
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#

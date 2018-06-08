@@ -72,7 +72,7 @@ splitSamples <- function(x, y, z, agg.radius=agg.radius) {
     for (r in 1:length(ri)) {region.index[ri[r]] <- paste0(region.index[ri[r]], '_', as.character(unique(extract(regions, x[ri[r],]))))}
     
     # count pixels per region
-    urv <- unique(regions.index[ri[r]])
+    urv <- unique(region.index[ri[r]])
     region.freq[[c]] <- data.frame(id=urv, count=sapply(urv, function(r) {sum(region.index[ri]==r)}))
     
   }

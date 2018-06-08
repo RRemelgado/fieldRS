@@ -8,7 +8,6 @@
 #' @details {Uses \link[raster]{intersect} to estimate the amount of overlap between two spatial objects (i.e. \emph{x}
 #' and \emph{y}). The function reports on the percentage of the area in each spatial object represented by their overlap.}
 #' @seealso \code{\link{derivePlots}} \code{\link{rankPlots}}
-#' @examples {}
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#

@@ -5,7 +5,6 @@
 #' @details {compares all elements of \emph{x} and returns the minimum ecludian distance between them.}
 #' @importFrom rgeos gDistance
 #' @seealso \code{\link{checkOverlap}}
-#' @examples {}
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#

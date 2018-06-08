@@ -6,7 +6,12 @@
 #' @return A \emph{numeric} element or an object of class \emph{RasterLayer}.
 #' @details {Estimates the relative frequency of non-NA values.}
 #' @seealso \code{\link{mape}}
-#' @examples {}
+#' @examples {
+#' 
+#' x <- c(1, 1, 1, NA, NA, 1, NA)
+#' f <- relative.freq(x, na.rm=TRUE)
+#' 
+#' }
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
