@@ -30,6 +30,8 @@ estimated. The function returns a list of three \emph{data.frame} objects where 
 \examples{
 {
 
+require(raster)
+
 # read raster data
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
@@ -37,7 +39,7 @@ r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 
 # derive time series
-ev <- extractTS(r, p)
+ev <- extractTS(p, r)
 
 # see information on selected pixels
 head(ev$pixel.info)

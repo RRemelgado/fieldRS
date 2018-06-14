@@ -25,6 +25,7 @@
 #' ev <- extractTS(r, p)
 #' 
 #' 
+#' 
 #' }
 #' @export
 
@@ -69,7 +70,7 @@ assignClass <- function(x, y) {
     d <- c[1]-c[2]
     
     # final output
-    return(list(class=i, r2=r, r2diff=d, rmse=e, count=length(i2)))
+    return(list(class=i1, r2=r, r2diff=d, rmse=e, count=length(i2)))
     
   }
   

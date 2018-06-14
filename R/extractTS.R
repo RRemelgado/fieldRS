@@ -18,6 +18,8 @@
 #' @seealso \code{\link{analyzeTS}}
 #' @examples {
 #' 
+#' require(raster)
+#' 
 #' # read raster data
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
@@ -25,7 +27,7 @@
 #' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 #' 
 #' # derive time series
-#' ev <- extractTS(r, p)
+#' ev <- extractTS(p, r)
 #' 
 #' # see information on selected pixels
 #' head(ev$pixel.info)
@@ -49,7 +51,7 @@ extractTS <- function(x, y) {
   
   if (!class(y) %in% c("numeric", "RasterStack", "RasterLayer", "RasterBrick")) {stop('"y" is not of a valid class')} else {
     
-    if (class(y)[1]=="RasterStack") {
+    if (class(y)[1] %in% c("RasterLayer", "RasterStack", "RasterBrick")) {
       if (crs(x)@projargs!=crs(y)@projargs) {stop('"x" and "y" have different projections')}
       ev <- TRUE}
     

@@ -30,6 +30,8 @@ row in \emph{x} against the median values for each unique class. The final outpu
 \examples{
 {
 
+require(raster)
+
 # read raster data
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 

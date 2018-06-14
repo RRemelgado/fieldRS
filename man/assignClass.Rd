@@ -4,7 +4,7 @@
 \alias{assignClass}
 \title{assignClass}
 \usage{
-assignClass(x, y, z)
+assignClass(x, y)
 }
 \arguments{
 \item{x}{A numeric vector.}
@@ -36,6 +36,7 @@ p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 
 # derive time series
 ev <- extractTS(r, p)
+
 
 
 }
