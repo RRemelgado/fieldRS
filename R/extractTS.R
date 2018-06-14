@@ -16,6 +16,24 @@
 #' \item{\emph{polygon.info} - Mean, min, max and standard deviation of the pixel cover; centroid coordinates.}
 #' \item{\emph{weighted.mean} - Weighted mean raster values (if \emph{y} is a raster object).}}}
 #' @seealso \code{\link{analyzeTS}}
+#' @examples {
+#' 
+#' # read raster data
+#' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+#' 
+#' # read field data
+#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' 
+#' # derive time series
+#' ev <- extractTS(r, p)
+#' 
+#' # see information on selected pixels
+#' head(ev$pixel.info)
+#' 
+#' # plot profile
+#' plot (ec$weighted.mean, type="l")
+#' 
+#' }
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#

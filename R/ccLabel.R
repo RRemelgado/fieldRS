@@ -19,6 +19,14 @@
 #'  \item{\emph{regions} - \emph{RasterLayer} object with region labels.}
 #'  \item{\emph{frequency} - \emph{data.frame} object with the pixel count for each unique value in \emph{regions}.}}}
 #' @seealso \code{\link{classModel}} \code{\link{classFilter}}
+#' @examples {
+#' 
+#' # read raster data
+#' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+#' 
+#' 
+#' 
+#' }
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
