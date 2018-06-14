@@ -27,6 +27,21 @@ row in \emph{x} against the median values for each unique class. The final outpu
  \item{\emph{y.r2} - \eqn{R^{2}} between the each row in \emph{x} and the median values for each unique class found in \emph{y.statistics}.}
  \item{\emph{plots} - List of line plots for each unique element in \emph{y}.}}}
 }
+\examples{
+{
+
+# read raster data
+r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+
+# read field data
+p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+
+# derive time series
+ev <- extractTS(r, p)
+
+
+}
+}
 \seealso{
 \code{\link{extractTS}} \code{\link{assignClass}} \code{\link{classModel}}
 }

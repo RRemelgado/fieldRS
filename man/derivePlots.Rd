@@ -21,6 +21,9 @@ Creates a fishnet from a spatial extent.
 {Creates a rectangular fishnet in a \emph{SpatialPolygon} format based on
 the extent of \emph{x} and the value of \emph{y} which defines the spatial resolution.}
 }
+\examples{
+{}
+}
 \seealso{
 \code{\link{rankPlots}}
 }

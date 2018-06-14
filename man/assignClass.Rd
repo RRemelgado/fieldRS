@@ -26,6 +26,20 @@ Classifies temporal profiles based on reference data.
  \item{\emph{r2diff} - Difference between the 1st and 2nd highest correlation values.}
  \item{\emph{rmse} - Root Mean Square Error (RMSE) betwen \emph{x} and the best fitting profile in \emph{y}.}}}
 }
+\examples{
+{
+
+r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+
+# read field data
+p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+
+# derive time series
+ev <- extractTS(r, p)
+
+
+}
+}
 \seealso{
 \code{\link{extractTS}} \code{\link{analyzeTS}}
 }

@@ -31,7 +31,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-assignClass <- function(x, y, z) {
+assignClass <- function(x, y) {
   
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   # 1. Check variables
@@ -40,12 +40,6 @@ assignClass <- function(x, y, z) {
   if (!is.numeric(x)) {stop('please provide "x" as a numeric vector')}
   if (!class(y)[1] %in% c("matrix", "data.frame")) {stop('"y" is not of a valid class')}
   if (length(x) != ncol(y)) {stop('"x" has a different lenght from the number of columns in "y"')}
-  if (exists("z")) {
-    if (!class(z)[1] %in% c("matrix", "data.frame")) {stop('please provide "z" as a numeric vector')}
-    if (length(x) != ncol(z)) {stop('"x" has a different lenght from the number of columns in "y"')}
-    if (ncol(z) != ncol(y)) {stop('"y" and "z" have a different number of columns')}
-    constrain <- TRUE
-  } else {constrain <- FALSE}
   
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   # 2. Check variables
@@ -74,15 +68,8 @@ assignClass <- function(x, y, z) {
     c <- rev(order(c))
     d <- c[1]-c[2]
     
-    # check if profile is above the class minimum
-    if (constrain) {
-      cc <- x[i2] - z[i1,i2]
-      if (min(cc) < 0) {ov <- list(class=NA, r2=NA, r2diff=NA, rmse=NA)}
-    } else {ov <- list(class=i, r2=r, r2diff=d, rmse=e, count=length(i2))}
-    if (!constain) {ov <- list(class=i, r2=r, r2diff=d, rmse=e, count=length(i2))}
-    
     # final output
-    return(ov)
+    return(list(class=i, r2=r, r2diff=d, rmse=e, count=length(i2)))
     
   }
   

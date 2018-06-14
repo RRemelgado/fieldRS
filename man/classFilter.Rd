@@ -21,6 +21,9 @@ Smoothing of a categorical raster object.
 {For all non-NA pixels in \emph{x}, the function uses a moving window with a number of pixels defined by \emph{y} to 
 look at its surroundings. If at least half of the values are non-NA, the function will return the dominant class.}
 }
+\examples{
+{}
+}
 \seealso{
 \code{\link{classModel}} \code{\link{ccLabel}}
 }

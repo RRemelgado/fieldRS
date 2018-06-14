@@ -40,6 +40,9 @@ of the function is a list consisting of:
  \item{\emph{overall.validation} - Finally accuracy value for each class (if "classification").}
  \item{\emph{r2 - Correlation between \emph{y} and the predicted values (if "regression")}}}}
 }
+\examples{
+{}
+}
 \seealso{
 \code{\link{splitSamples}} \code{\link{ccLabel}} \code{\link{classFilter}}
 }

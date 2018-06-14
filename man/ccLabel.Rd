@@ -33,6 +33,16 @@ The final output of the function is a list consisting of:
  \item{\emph{regions} - \emph{RasterLayer} object with region labels.}
  \item{\emph{frequency} - \emph{data.frame} object with the pixel count for each unique value in \emph{regions}.}}}
 }
+\examples{
+{
+
+# read raster data
+r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+
+
+
+}
+}
 \seealso{
 \code{\link{classModel}} \code{\link{classFilter}}
 }

@@ -18,6 +18,9 @@ Calculates the ecludian distance among all elements of a SpatialPoints object.
 \details{
 {compares all elements of \emph{x} and returns the minimum ecludian distance between them.}
 }
+\examples{
+{}
+}
 \seealso{
 \code{\link{checkOverlap}}
 }
