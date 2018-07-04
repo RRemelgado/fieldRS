@@ -39,8 +39,12 @@ r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 
 # derive time series
-ev <- extractTS(r, p)
+ev <- extractTS(p, r)
 
+# read reference profiles
+reference <- read.csv(system.file("extdata", "classes.csv", package="fieldRS"))
+
+analyzeTS(ev, reference)
 
 }
 }
