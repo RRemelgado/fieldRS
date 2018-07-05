@@ -43,7 +43,10 @@
 #' c <- spCentroid(p)
 #' ev <- as.data.frame(extract(r, c))
 #' 
+#' # original class names
+#' c = unname(sapply(z, function(j) {strsplit(j, "_")[[1]][1]}))
 #' 
+#' classModel(ev, c, l)
 #' 
 #' 
 #' }
@@ -85,9 +88,9 @@ classModel <- function(x, y, z, mode="classification", method="rf") {
       # validate each region
       for (r in 1:length(u)) {
         vi <- i[which(z[i] == u[r])]
-        ti <- i[!n %in% vi]
+        ti <- n[!n %in% vi]
         m <- train(x[ti,], as.factor(y[ti]), method=method)
-        v[vi] <- predict(m, x[vi,], y[vi]) == unique[c]}
+        v[vi] <- as.vector(predict(m, x[vi,])) == unique.y[c]}
 
       # derive accuracy
       a[c] <- sum((v[i])) / length(i)
@@ -96,7 +99,7 @@ classModel <- function(x, y, z, mode="classification", method="rf") {
 
     # make plot with accuracies
     odf <- data.frame(class=unique.y, accuracy=a, stringsAsFactors=TRUE)
-    p <- ggplot(odf, aes_string(x="class", y="accuracy")) + theme_bw() + ylim(0,1)
+    p <- ggplot(odf, aes_string(x="class", y="accuracy")) + geom_bar(stat="identity") + theme_bw() + ylim(0,1)
 
     # derive output
     return(list(sample.validation=v, overall.validation=odf))

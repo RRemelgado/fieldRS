@@ -85,7 +85,7 @@ splitSamples <- function(x, y, z, agg.radius=agg.radius) {
     regions <- ccLabel(regions)$regions
     
     # update region id's
-    region.id[ri] <- paste0(unique.z[c], "_", sprintf("003d", extract(regions, centroids[ri,1:2])))
+    region.id[ri] <- paste0(unique.z[c], "_", sprintf("%003d", extract(regions, centroids[ri,1:2])))
     
     # count pixels per region
     urv <- unique(regions)
