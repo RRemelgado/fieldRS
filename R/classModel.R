@@ -37,11 +37,13 @@
 #' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 #' 
 #' # sample labels
-#' agg.label <- splitSamples(p, r, p$crop, agg.radius=90)
+#' l <- splitSamples(p, r, p$crop, agg.radius=30)
 #' 
 #' # extract values for polygon centroid
 #' c <- spCentroid(p)
-#' ev <- extract(r, c)
+#' ev <- as.data.frame(extract(r, c))
+#' 
+#' 
 #' 
 #' 
 #' }
