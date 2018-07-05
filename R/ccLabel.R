@@ -11,9 +11,9 @@
 #' \itemize{
 #'  \item{\emph{simple} - Connects neighboring pixels with the same value. Suitable for categorical data.}
 #'  \item{\emph{space_change} - Estimates the MADE using a 3x3 moving window and connects pixels where the 
-#'  spatial change \emph{change.threshold}.}
+#'  spatial change is lower than \emph{change.threshold}.}
 #'  #'  \item{\emph{time_change} - Estimates the MADE using all layers in a multi-band raster and connects 
-#'  pixels where the temporal change is below \emph{change.threshold}.}}
+#'  pixels where the temporal change is higher than \emph{change.threshold}.}}
 #' The final output of the function is a list consisting of:
 #' \itemize{
 #'  \item{\emph{regions} - \emph{RasterLayer} object with region labels.}
@@ -24,7 +24,13 @@
 #' # read raster data
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
+#' # spatial change labeling
+#' or <- ccLabel(r[[1]], method="spatial_change", change.threshold=10)
+#' plot(or$regions)
 #' 
+#' # temporal change labeling
+#' or <- ccLabel(r, method="temporal_change", change.threshold=10)
+#' plot(or$regions)
 #' 
 #' }
 #' @export
@@ -46,7 +52,14 @@ ccLabel <- function(x, method='simple', change.threshold=NULL) {
   if (method %in% c('spatial_change', 'temporal_change')) {
     if (is.null(change.threshold)) {stop(paste0('"method" set as ", ', method, '" (please specify "change.threshold")'))}
     if (!is.numeric(change.threshold)) {stop('"change.threshold" is not numeric')}
-    if (length(change.threshold) > 1) {stop('"change.threshold" has more than one element')}}
+    if (length(change.threshold) > 1) {stop('"change.threshold" has more than one element')}
+    
+    if (method == "spatial_change" & class(x)[1] != "RasterLayer") {
+      stop('"method" is set to "spatial_change", provide "x" as a RasterLayer')}
+    if (method == "temporal_change" & !class(x)[1] %in% c("RasterStack", "RasterBrick")) {
+      stop('"method" is set to "temporal_change", provide "x" as a RasterBrick or RasterStack')}
+    
+  }
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 2. find connected pixel regions
@@ -69,9 +82,10 @@ ccLabel <- function(x, method='simple', change.threshold=NULL) {
 
   }
 
-  if (method == 'spatial_change') {regions <- clump(focal(r, w=matrix(1, 3, 3), mape, na.rm=TRUE) < change.threshold)}
+  if (method == 'spatial_change') {regions <- clump(focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE) < change.threshold)}
 
-  if (method == 'temporal_change') {regions <- clump(calc(x, mape, na.rm=TRUE) < change.threshold)}
+  if (method == 'temporal_change') {
+    regions <- clump(calc(x, function(j) {(max(j, na.rm=TRUE)-min(j, na.rm=TRUE)) / min(j, na.rm=TRUE)*100}) > change.threshold)}
   
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. return region image and region pixel frequency

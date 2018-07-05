@@ -39,13 +39,13 @@ r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 
 # derive time series
-ev <- extractTS(p, r)
+ev <- extractTS(p[1,], r)
 
 # see information on selected pixels
 head(ev$pixel.info)
 
 # plot profile
-plot (ec$weighted.mean, type="l")
+plot(ev$weighted.mean[1,], type="l")
 
 }
 }

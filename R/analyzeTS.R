@@ -26,12 +26,14 @@
 #' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 #' 
 #' # derive time series
-#' ev <- extractTS(p, r)
+#' ev <- extractTS(p[3:4,], r)
 #' 
 #' # read reference profiles
-#' reference <- read.csv(system.file("extdata", "classes.csv", package="fieldRS"))
+#' reference <- read.csv(system.file("extdata", "classes.csv", package="fieldRS"), stringsAsFactors=FALSE)
 #' 
-#' analyzeTS(ev, reference)
+#' ac <- assignClass(ev$weighted.mean, reference[,2:6])
+#' 
+#' a.ts <- analyzeTS(ev$weighted.mean, reference[ac$class,1])
 #' 
 #' }
 #' @export

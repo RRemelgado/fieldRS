@@ -29,13 +29,13 @@ Classifies temporal profiles based on reference data.
 \examples{
 {
 
+require(raster)
+
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
-# read field data
 p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 
-# derive time series
-ev <- extractTS(r, p)
+ev <- extractTS(p, r)
 
 
 
