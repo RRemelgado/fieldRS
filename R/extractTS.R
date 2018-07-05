@@ -27,13 +27,13 @@
 #' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
 #' 
 #' # derive time series
-#' ev <- extractTS(p, r)
+#' ev <- extractTS(p[1,], r)
 #' 
 #' # see information on selected pixels
 #' head(ev$pixel.info)
 #' 
 #' # plot profile
-#' plot (ec$weighted.mean, type="l")
+#' plot(ev$weighted.mean[1,], type="l")
 #' 
 #' }
 #' @export
@@ -68,21 +68,19 @@ extractTS <- function(x, y) {
 
   # extract samples per polygon ID
   out.df <- do.call(rbind, lapply(1:length(x), function(i) {
-    s <- poly2sample(pol.shp=x[i,], ref.ext=y, min.cover=0)
+    s <- poly2sample(x[i,], y[[1]], min.cover=1)
     if (is.null(s)) {return(NULL)} else {return(data.frame(id=i, x=s@coords[,1], y=s@coords[,2], cov=s@data$cover))}}))
-
+  
   # extract raster values (if y is provided)
-  out.val <- do.call(rbind, lapply(1:length(x), function(i) {
-    i <- which(out.df$id == i)
-    if (ev) {v <- apply(out.df[i,], 1, weighted.mean(x,out.df$cov[i]), na.rm=TRUE)} else {v <- NULL}
-    odf <- data.frame(id=i, x=mean(out.df$x[i]), y=mean(out.df$y[i]), 
-                      min.cover=min(out.df$cover[i]), 
-                      max.cover=max(out.df$cover[i]), 
-                      mean.cover=mean(out.df$cover[i]))
-    return(list(val=v, info=odf))}))
+  out.val <- lapply(1:length(x), function(i) {
+    ind <- which(out.df$id == i)
+    if (ev) {v <- apply(extract(y, out.df[ind,2:3]), 2, function(j) {weighted.mean(j, out.df$cov[ind], na.rm=TRUE)})} else {v <- NULL}
+    odf <- data.frame(id=i, x=mean(out.df$x[ind]), y=mean(out.df$y[ind]), min.cover=min(out.df$cov[ind]), 
+                      max.cover=max(out.df$cov[ind]), mean.cover=mean(out.df$cov[ind]))
+    return(list(val=v, info=odf))})
   
   # return list
-  return(list(pixel.info=out.df, polygon.info=do.call(rbind, lapply(out.val, function(i) {i$odf})), 
-              weighted.mean=sapply(out.val, function(i) {i$val})))
+  return(list(pixel.info=out.df, polygon.info=do.call(rbind, lapply(out.val, function(i) {i$info})), 
+              weighted.mean=do.call(rbind, lapply(out.val, function(i) {i$val}))))
 
 }
