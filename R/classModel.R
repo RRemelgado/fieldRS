@@ -26,7 +26,25 @@
 #'  \item{\emph{overall.validation} - Finally accuracy value for each class (if "classification").}
 #'  \item{\emph{r2 - Correlation between \emph{y} and the predicted values (if "regression")}}}}
 #' @seealso \code{\link{splitSamples}} \code{\link{ccLabel}} \code{\link{classFilter}}
-#' @examples {}
+#' @examples {
+#' 
+#' require(raster)
+#' 
+#' # read raster data
+#' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+#' 
+#' # read field data
+#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' 
+#' # sample labels
+#' agg.label <- splitSamples(p, r, p$crop, agg.radius=90)
+#' 
+#' # extract values for polygon centroid
+#' c <- spCentroid(p)
+#' ev <- extract(r, c)
+#' 
+#' 
+#' }
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -41,11 +59,11 @@ classModel <- function(x, y, z, mode="classification", method="rf") {
   if (!is.data.frame(x)) {stop('"x" is not a data.frame')}
   if (!is.vector(y)) {stop('"y" is not a vector')}
   if (!is.vector(z)) {stop('"z" is not a vector')}
-
+  
   if (nrow(x) != length(y)) {stop('"x" and "y" have a different number of entries')}
   if (nrow(x) != length(z)) {stop('"x" and "z" have a different number of entries')}
   if (!mode %in% c('classification', 'regression')) {stop('"mode" is not a valid keyword')}
-
+  
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 2. train and validate models
 #-----------------------------------------------------------------------------------------------------------------------------------------------#

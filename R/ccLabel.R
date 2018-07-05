@@ -21,6 +21,8 @@
 #' @seealso \code{\link{classModel}} \code{\link{classFilter}}
 #' @examples {
 #' 
+#' require(raster)
+#' 
 #' # read raster data
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 

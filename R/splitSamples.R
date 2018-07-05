@@ -11,10 +11,28 @@
 #' it aggregates all pixels that are within a given distance of each other - defined by \emph{agg.radius} using \code{\link{ccLabel}}. The 
 #' output is a list consisting of:
 #' \itemize{
-#'  \item{\emph{region.index} - Class dependent region label for each element in \emph{x}.}
-#'  \item{\emph{region.frequency} - Pixel count for each unique value in \emph{region.index}.}}}
+#'  \item{\emph{region.id} - Class dependent region label for each element in \emph{x}.}
+#'  \item{\emph{region.frequency} - Pixel count for each unique value in \emph{region.id}.}}}
 #' @seealso \code{\link{assignClass}} \code{\link{classModel}}
-#' @examples {}
+#' @examples {
+#' 
+#' require(raster)
+#' 
+#' # read raster data
+#' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+#' 
+#' # read field data
+#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' 
+#' agg.label <- splitSamples(p[1,], r, p$crop[1], agg.radius=90)
+#' 
+#' # show labels
+#' agg.label$region.id
+#' 
+#' # show region pixel count
+#' agg.label$region.frequency
+#' 
+#' }
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -30,22 +48,24 @@ splitSamples <- function(x, y, z, agg.radius=agg.radius) {
     stop('"x" is not a valid spatial object')}
   if (!class(y) %in% c('RasterLayer', 'RasterStack', 'RasterBrick')) {stop('"y" is not a valid raster object')}
   
+  if (class(x)[1] %in% c('SpatialPolygons', 'SpatialPolygonsDataFrame')) {centroids <- spCentroid(x)} else {centroids <- x@coords}
+  
   if (crs(x)@projargs!=crs(y)@projargs) {stop('"x" and "y" have different projections')}
-  if (checkOverlap(x,y)[1]) {stop('"x" is not contained by "y"')}
+  if (checkOverlap(x,y)[1] != 100) {stop('"x" is not contained by "y"')}
   rdims <- dim(y) # raster dimensions
   
-  if (exists(z)) {if (!is.vector(z)) {stop('"z" should be a vector')}} else {z <- replicate(length(x), 1)}
+  if (exists("z")) {if (!is.vector(z)) {stop('"z" should be a vector')}} else {z <- replicate(length(x), 1)}
   unique.z <- unique(z) # target classes
   
   if (!is.numeric(agg.radius)) {stop('"agg.radius" is not a numeric element')}
-  if (length(agg.radius) > 0) {stop('"agg.radius" has more than 1 element')}
-  agg.radius <- round(res(y) / agg.radius) # number of pixels
+  if (length(agg.radius) > 1) {stop('"agg.radius" has more than 1 element')}
+  agg.radius <- round(agg.radius/res(y)[1]) # number of pixels
   
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 2. derive region indices
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
   
-  region.index <- as.character(z) # region id for each sample
+  region.id <- vector('character', length(z)) # region id for each sample
   region.freq <- vector('list', length(z)) # region pixel count
   
   for (c in 1:length(unique.z)) {
@@ -59,21 +79,18 @@ splitSamples <- function(x, y, z, agg.radius=agg.radius) {
     for (p in 1:length(ci)) {
       rp <- rowFromCell(r, ci[p])
       cp <- colFromCell(r, ci[p])
-      if (cp > agg.radius) {sc<-cp-agg.radius} else {sc<-cp}
-      if (cp < (rdims[2]-agg.radius)) {ec<-cp+agg.radius} else {ec<-cp}
-      if (rp > agg.radius) {sr<-rp-agg.radius} else {sr<-rp}
-      if (rp < (rdims[1]-agg.radius)) {er<-rp+agg.radius} else {er<-rp}
-      regions[sr:er,sc:ec]<- 1}
+      regions[(rp-agg.radius):(rp+agg.radius),(cp-agg.radius):(cp+agg.radius)]<- 1}
     
     # label regions
     regions <- ccLabel(regions)$regions
     
     # update region id's
-    for (r in 1:length(ri)) {region.index[ri[r]] <- paste0(region.index[ri[r]], '_', as.character(unique(extract(regions, x[ri[r],]))))}
+    region.id[ri] <- paste0(unique.z[c], "_", sprintf("003d", extract(regions, centroids[ri,1:2])))
     
     # count pixels per region
-    urv <- unique(region.index[ri[r]])
-    region.freq[[c]] <- data.frame(id=urv, count=sapply(urv, function(r) {sum(region.index[ri]==r)}))
+    urv <- unique(regions)
+    urv <- urv[urv > 0]
+    region.freq[[c]] <- data.frame(id=urv, count=sapply(urv, function(r) {cellStats(regions==r, sum)}))
     
   }
   
@@ -81,6 +98,6 @@ splitSamples <- function(x, y, z, agg.radius=agg.radius) {
 # 3. return output
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
  
-  return(region.index=region.index, region.frequency=region.freq)
+  return(list(region.id=region.id, region.frequency=do.call(rbind, region.freq)))
 
 }
