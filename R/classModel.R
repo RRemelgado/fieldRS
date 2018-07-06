@@ -102,7 +102,7 @@ classModel <- function(x, y, z, mode="classification", method="rf") {
     p <- ggplot(odf, aes_string(x="class", y="accuracy")) + geom_bar(stat="identity") + theme_bw() + ylim(0,1)
 
     # derive output
-    return(list(sample.validation=v, overall.validation=odf))
+    return(list(sample.validation=v, overall.validation=odf, f1.plot=p))
 
   }
 
