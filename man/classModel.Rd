@@ -41,8 +41,31 @@ of the function is a list consisting of:
  \item{\emph{r2 - Correlation between \emph{y} and the predicted values (if "regression")}}}}
 }
 \examples{
-{}
+\dontrun{
+
+require(raster)
+
+# read raster data
+r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+
+# read field data
+data(fieldData)
+
+# sample labels
+l <- splitSamples(fieldData, r, fieldData$crop, agg.radius=30)
+
+# extract values for polygon centroid
+c <- spCentroid(fieldData)
+ev <- as.data.frame(extract(r, c))
+
+# original class names
+c = unname(sapply(l$region.id, function(j) {
+strsplit(j, "_")[[1]][1]}))
+
+classModel(ev, c, l$region.id)
+
+}
 }
 \seealso{
-\code{\link{splitSamples}} \code{\link{ccLabel}} \code{\link{classFilter}}
+\code{\link{splitSamples}} \code{\link{ccLabel}}
 }

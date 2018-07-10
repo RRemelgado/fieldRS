@@ -36,15 +36,17 @@ require(raster)
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
 # read field data
-p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
-
-# derive time series
-ev <- extractTS(p[1,], r)
+data(fieldData)
 
 # read reference profiles
-reference <- read.csv(system.file("extdata", "classes.csv", package="fieldRS"))
+data(referenceProfiles)
 
-analyzeTS(ev, reference)
+# derive time series
+ev <- extractTS(fieldData[3:4,], r)
+
+ac <- assignClass(ev$weighted.mean, referenceProfiles[,2:6])
+
+a.ts <- analyzeTS(ev$weighted.mean, referenceProfiles[ac$class,1])
 
 }
 }

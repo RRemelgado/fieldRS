@@ -4,7 +4,7 @@
 \alias{rankPlots}
 \title{rankPlots}
 \usage{
-rankPlots(x, y, z, min.size = 0, priority = c("class_count", "patch_count",
+rankPlots(x, y, z, min.size = 1, priority = c("class_count", "patch_count",
   "pixel_frequency", "road_distance"))
 }
 \arguments{
@@ -47,8 +47,34 @@ The final output is a \emph{data.frame} reporting on:
  \item{\emph{ranking} - Priority ranking}}}
 }
 \examples{
-{}
+{
+
+require(raster)
+require(RStoolbox)
+require(ggplot2)
+
+# read raster data
+r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+
+# read road information
+data(roads)
+
+# unsupervised classification with kmeans
+uc <- unsuperClass(r, nSamples=5000, nClasses=5)$map
+
+# derive potential sampling plots
+pp <- derivePlots(uc, 1000)
+
+# plot ranking
+pp@data <- rankPlots(uc, pp, roads)
+
+# plot output
+gp <- fortify(pp, region="ranking")
+ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + 
+geom_polygon() + scale_fill_continuous(name="Ranking")
+
+}
 }
 \seealso{
-\code{\link{derivePlots}}
+\code{\link{derivePlots}} \code{\link{ccLabel}}
 }

@@ -7,9 +7,9 @@
 assignClass(x, y)
 }
 \arguments{
-\item{x}{A numeric vector.}
+\item{x}{A numeric vector, a \emph{matrix} or a \emph{data.frame}.}
 
-\item{y}{A \emph{matrix} or a \emph{data.frame}.}
+\item{y}{A numeric vector, a \emph{matrix} or a \emph{data.frame}.}
 }
 \value{
 A list containing containing multi-variate information on the classification of \emph{x}.
@@ -18,7 +18,7 @@ A list containing containing multi-variate information on the classification of 
 Classifies temporal profiles based on reference data.
 }
 \details{
-{The function correlates \emph{x} against each row in \emph{y} and classifies
+{The function correlates each row in \emph{x} against each row in \emph{y} and classifies
 \emph{x} based on the highest r2 value. The final output is provided as a list containing:
 \itemize{
  \item{\emph{class} - Class ID of \emph{x} corresponding to the rrow in \emph{y} with the highest r2 when compared with \emph{x}.}
@@ -31,13 +31,20 @@ Classifies temporal profiles based on reference data.
 
 require(raster)
 
+# read raster data
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
-p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+# read field data
+data(fieldData)
 
-ev <- extractTS(p, r)
+# read reference profiles
+data(referenceProfiles)
 
+# derive time series
+ev <- extractTS(fieldData[1,], r)
 
+# compare derived and reference profiles
+assignClass(ev$weighted.mean, referenceProfiles[,2:6])
 
 }
 }

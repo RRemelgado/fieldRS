@@ -19,8 +19,18 @@ Calculates the ecludian distance among all elements of a SpatialPoints object.
 {compares all elements of \emph{x} and returns the minimum ecludian distance between them.}
 }
 \examples{
-{}
+{
+
+require(raster)
+
+# read field data
+data(fieldData)
+
+# show distance matrix
+head(ecDistance(fieldData))
+
+}
 }
 \seealso{
-\code{\link{checkOverlap}}
+\code{\link{spCentroid}}
 }

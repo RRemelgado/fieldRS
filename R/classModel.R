@@ -8,8 +8,8 @@
 #' @param method Classification algorithm. See options provided through \link[caret]{train}.
 #' @return A two element numeric \emph{vector}.
 #' @importFrom caret train
-#' @importFrom stats predict
 #' @importFrom ggplot2 ggplot aes_string theme_bw ylim
+#' @importFrom rsMove checkOverlap
 #' @details {Uses \link[caret]{train} to derive a predictive model based on \emph{x} - which contains the predictors - and \emph{y} - which
 #' contains information on the target classes (if \emph{mode} is "classification") or values (if \emph{mode} is "regression"). This method
 #' iterates through all samples making sure that all contribute for the final accuracy. To specify how the samples should be split, the user
@@ -25,8 +25,8 @@
 #'  \item{\emph{sample.validation} - Accuracy assessment of each sample.}
 #'  \item{\emph{overall.validation} - Finally accuracy value for each class (if "classification").}
 #'  \item{\emph{r2 - Correlation between \emph{y} and the predicted values (if "regression")}}}}
-#' @seealso \code{\link{splitSamples}} \code{\link{ccLabel}} \code{\link{classFilter}}
-#' @examples {
+#' @seealso \code{\link{splitSamples}} \code{\link{ccLabel}}
+#' @examples \dontrun{
 #' 
 #' require(raster)
 #' 
@@ -34,20 +34,20 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # read field data
-#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' data(fieldData)
 #' 
 #' # sample labels
-#' l <- splitSamples(p, r, p$crop, agg.radius=30)
+#' l <- splitSamples(fieldData, r, fieldData$crop, agg.radius=30)
 #' 
 #' # extract values for polygon centroid
-#' c <- spCentroid(p)
+#' c <- spCentroid(fieldData)
 #' ev <- as.data.frame(extract(r, c))
 #' 
 #' # original class names
-#' c = unname(sapply(z, function(j) {strsplit(j, "_")[[1]][1]}))
+#' c = unname(sapply(l$region.id, function(j) {
+#' strsplit(j, "_")[[1]][1]}))
 #' 
-#' classModel(ev, c, l)
-#' 
+#' classModel(ev, c, l$region.id)
 #' 
 #' }
 #' @export

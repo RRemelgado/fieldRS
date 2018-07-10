@@ -21,16 +21,16 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # read field data
-#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
-#' 
-#' # derive time series
-#' ev <- extractTS(p[1,], r)
+#' data(fieldData)
 #' 
 #' # read reference profiles
-#' reference <- read.csv(system.file("extdata", "classes.csv", package="fieldRS"))
+#' data(referenceProfiles)
+#' 
+#' # derive time series
+#' ev <- extractTS(fieldData[1,], r)
 #' 
 #' # compare derived and reference profiles
-#' assignClass(ev$weighted.mean, reference[,2:6])
+#' assignClass(ev$weighted.mean, referenceProfiles[,2:6])
 #' 
 #' }
 #' @export

@@ -24,10 +24,10 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # read field data
-#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' data(fieldData)
 #' 
 #' # derive time series
-#' ev <- extractTS(p[1,], r)
+#' ev <- extractTS(fieldData[1,], r)
 #' 
 #' # see information on selected pixels
 #' head(ev$pixel.info)

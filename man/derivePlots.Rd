@@ -22,7 +22,21 @@ Creates a fishnet from a spatial extent.
 the extent of \emph{x} and the value of \emph{y} which defines the spatial resolution.}
 }
 \examples{
-{}
+{
+
+require(raster)
+
+# read field data
+data(fieldData)
+
+# derive plots
+g <- derivePlots(fieldData, 1000)
+
+# compare original data and output
+plot(fieldData)
+plot(g, border="red", add=TRUE)
+
+}
 }
 \seealso{
 \code{\link{rankPlots}}

@@ -10,15 +10,16 @@
 #' value. Each group receives a distinct numeric label. The function provides two connected component labeling alogorithms:
 #' \itemize{
 #'  \item{\emph{simple} - Connects neighboring pixels with the same value. Suitable for categorical data.}
-#'  \item{\emph{space_change} - Estimates the MADE using a 3x3 moving window and connects pixels where the 
-#'  spatial change is lower than \emph{change.threshold}.}
-#'  #'  \item{\emph{time_change} - Estimates the MADE using all layers in a multi-band raster and connects 
-#'  pixels where the temporal change is higher than \emph{change.threshold}.}}
+#'  \item{\emph{space_change} - Estimates the MADE using a 3x3 moving window distinguishes neighboring pixels 
+#'  when the spatial change is lower than \emph{change.threshold}.}
+#'  #'  \item{\emph{time_change} - For each pixel, it estimates the percent difference between the minimum 
+#'  and maximum values among all layers in \emph{x} and distinguishes spatially neighboring pixels when the 
+#'  temporal change is higher than \emph{change.threshold}.}}
 #' The final output of the function is a list consisting of:
 #' \itemize{
 #'  \item{\emph{regions} - \emph{RasterLayer} object with region labels.}
 #'  \item{\emph{frequency} - \emph{data.frame} object with the pixel count for each unique value in \emph{regions}.}}}
-#' @seealso \code{\link{classModel}} \code{\link{classFilter}}
+#' @seealso \code{\link{classModel}} \code{\link{rankPlots}}
 #' @examples {
 #' 
 #' require(raster)
@@ -84,10 +85,12 @@ ccLabel <- function(x, method='simple', change.threshold=NULL) {
 
   }
 
-  if (method == 'spatial_change') {regions <- clump(focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE) < change.threshold)}
-
+  if (method == 'spatial_change') {regions <- clump(focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE) < change.threshold)
+  regions[regions == 1] <- cellStats(regions, max) + 1}
+  
   if (method == 'temporal_change') {
-    regions <- clump(calc(x, function(j) {(max(j, na.rm=TRUE)-min(j, na.rm=TRUE)) / min(j, na.rm=TRUE)*100}) > change.threshold)}
+    regions <- clump(calc(x, function(j) {(max(j, na.rm=TRUE)-min(j, na.rm=TRUE)) / min(j, na.rm=TRUE)*100}) > change.threshold)
+    regions[regions == 1] <- cellStats(regions, max) + 1}
   
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. return region image and region pixel frequency

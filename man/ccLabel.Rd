@@ -24,10 +24,11 @@ Labels groups of pixels in a raster object that share similar atributes.
 value. Each group receives a distinct numeric label. The function provides two connected component labeling alogorithms:
 \itemize{
  \item{\emph{simple} - Connects neighboring pixels with the same value. Suitable for categorical data.}
- \item{\emph{space_change} - Estimates the MADE using a 3x3 moving window and connects pixels where the 
- spatial change \emph{change.threshold}.}
- #'  \item{\emph{time_change} - Estimates the MADE using all layers in a multi-band raster and connects 
- pixels where the temporal change is below \emph{change.threshold}.}}
+ \item{\emph{space_change} - Estimates the MADE using a 3x3 moving window distinguishes neighboring pixels 
+ when the spatial change is lower than \emph{change.threshold}.}
+ #'  \item{\emph{time_change} - For each pixel, it estimates the percent difference between the minimum 
+ and maximum values among all layers in \emph{x} and distinguishes spatially neighboring pixels when the 
+ temporal change is higher than \emph{change.threshold}.}}
 The final output of the function is a list consisting of:
 \itemize{
  \item{\emph{regions} - \emph{RasterLayer} object with region labels.}
@@ -36,13 +37,21 @@ The final output of the function is a list consisting of:
 \examples{
 {
 
+require(raster)
+
 # read raster data
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
+# spatial change labeling
+or <- ccLabel(r[[1]], method="spatial_change", change.threshold=10)
+plot(or$regions)
 
+# temporal change labeling
+or <- ccLabel(r, method="temporal_change", change.threshold=10)
+plot(or$regions)
 
 }
 }
 \seealso{
-\code{\link{classModel}} \code{\link{classFilter}}
+\code{\link{classModel}} \code{\link{rankPlots}}
 }

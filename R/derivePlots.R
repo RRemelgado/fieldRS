@@ -13,13 +13,13 @@
 #' require(raster)
 #' 
 #' # read field data
-#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' data(fieldData)
 #' 
 #' # derive plots
-#' g <- derivePlots(p, 1000)
+#' g <- derivePlots(fieldData, 1000)
 #' 
 #' # compare original data and output
-#' plot(p)
+#' plot(fieldData)
 #' plot(g, border="red", add=TRUE)
 #' 
 #' }
@@ -33,8 +33,10 @@ derivePlots <- function(x, y) {
   # determine rescaling factor
   if (length(y) > 1) {stop('"y" has more than 1 element')}
 
-  p <- rasterToPolygons(raster(extend(extent(x), y), res=y, crs=crs(x)))
-
+  p <- rasterToPolygons(raster(extent(x), res=y, crs=crs(x))) # build grid
+  p <- crop(p, x) # crop grid by the reference object
+  p <- p[area(p)==c(y*y),] # filter cells with an area smaller than intended
+  
   return(p)
 
 }

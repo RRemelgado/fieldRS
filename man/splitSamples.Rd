@@ -26,11 +26,29 @@ Aggregates a spatial object into regions.
 it aggregates all pixels that are within a given distance of each other - defined by \emph{agg.radius} using \code{\link{ccLabel}}. The 
 output is a list consisting of:
 \itemize{
- \item{\emph{region.index} - Class dependent region label for each element in \emph{x}.}
- \item{\emph{region.frequency} - Pixel count for each unique value in \emph{region.index}.}}}
+ \item{\emph{region.id} - Class dependent region label for each element in \emph{x}.}
+ \item{\emph{region.frequency} - Pixel count for each unique value in \emph{region.id}.}}}
 }
 \examples{
-{}
+{
+
+require(raster)
+
+# read raster data
+r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+
+# read field data
+data(fielData)
+
+agg.label <- splitSamples(fieldData[1,], r, fieldData$crop[1], agg.radius=90)
+
+# show labels
+agg.label$region.id
+
+# show region pixel count
+agg.label$region.frequency
+
+}
 }
 \seealso{
 \code{\link{assignClass}} \code{\link{classModel}}

@@ -4,16 +4,16 @@
 #' @return A \emph{matrix}.
 #' @details {compares all elements of \emph{x} and returns the minimum ecludian distance between them.}
 #' @importFrom rgeos gDistance
-#' @seealso \code{\link{checkOverlap}}
+#' @seealso \code{\link{spCentroid}}
 #' @examples {
 #' 
 #' require(raster)
 #' 
 #' # read field data
-#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' data(fieldData)
 #' 
 #' # show distance matrix
-#' head(ecDistance(p))
+#' head(ecDistance(fieldData))
 #' 
 #' }
 #' @export
