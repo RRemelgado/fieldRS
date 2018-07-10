@@ -76,16 +76,13 @@ extractFields <- function(x) {
 
   # check if regions are contained by their polygons and evaluate shape
   shp.info <- lapply(1:length(shp), function(i) {
-    ai <- ifelse(area(shp[i,]) > 0, area(shp[i,]) / (cellStats(crop(x, shp[i,])==uv[i], sum)*pixel.area), Inf)
     pp <- polyPerimeter(shp[i,])
     pa <- area(shp[i,])
     return(list(ai=ai, pp=pp, pa=pa))})
 
   # build SpatialPolygonsDataFrame
-  odf <- data.frame(ID=uv, ai=sapply(shp.info, function(i) {i$ai}),
-                    pp=sapply(shp.info, function(i) {i$pa}),
-                    pa=sapply(shp.info, function(i) {i$pp}))
-  colnames(odf) <- c("region ID", "Area Index", "Area", "Perimeter")
+  odf <- data.frame(ID=uv, sapply(shp.info, function(i) {i$pa}), pa=sapply(shp.info, function(i) {i$pp}))
+  colnames(odf) <- c("region ID", "Area", "Perimeter")
   row.names(odf) <- uv
   shp <- SpatialPolygonsDataFrame(shp, odf)
 
