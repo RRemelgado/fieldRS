@@ -5,6 +5,7 @@
 #' @return A \emph{spatialPointsDataFrame} object.
 #' @importFrom sp SpatialPointsDataFrame
 #' @details {Returns the centroid of each element in \emph{x}.}
+#' @seealso \code{\link{ecDistance}}
 #' @examples {
 #' 
 #' require(raster)
@@ -13,13 +14,13 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # read field data
-#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' data(fieldData)
 #' 
 #' # derive centroids
-#' c <- spCentroid(p)
+#' c <- spCentroid(fieldData)
 #' 
 #' # plot polygons and compare with centroids
-#' plot(p)
+#' plot(fieldData)
 #' points(c, col="red")
 #' 
 #' }

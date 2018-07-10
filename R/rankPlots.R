@@ -30,14 +30,40 @@
 #'  \item{\emph{frequency} - Number of non-NA pixels.}
 #'  \item{\emph{distance} - Linear distance to the closest road.}
 #'  \item{\emph{ranking} - Priority ranking}}}
-#' @seealso \code{\link{derivePlots}}
-#' @examples {}
+#' @seealso \code{\link{derivePlots}} \code{\link{ccLabel}}
+#' @examples {
+#' 
+#' require(raster)
+#' require(RStoolbox)
+#' require(ggplot2)
+#' 
+#' # read raster data
+#' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
+#' 
+#' # read road information
+#' data(roads)
+#' 
+#' # unsupervised classification with kmeans
+#' uc <- unsuperClass(r, nSamples=5000, nClasses=5)$map
+#' 
+#' # derive potential sampling plots
+#' pp <- derivePlots(uc, 1000)
+#' 
+#' # plot ranking
+#' pp@data <- rankPlots(uc, pp, roads)
+#' 
+#' # plot output
+#' gp <- fortify(pp, region="ranking")
+#' ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + 
+#' geom_polygon() + scale_fill_continuous(name="Ranking")
+#' 
+#' }
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-rankPlots <- function(x, y, z, min.size=0, priority=c('class_count', 'patch_count', 'pixel_frequency', 'road_distance')) {
+rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_count', 'pixel_frequency', 'road_distance')) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. check variables
@@ -62,7 +88,7 @@ rankPlots <- function(x, y, z, min.size=0, priority=c('class_count', 'patch_coun
   # roads
   if (exists("z")) {
     if (!class(z)[1] %in% c('SpatialLines', 'SpatialLinesDataFrame')) {stop('"roads" is not of a valid class')}
-    if (checkOverlap(x, z)[2]!=100) {warning('"z" is not contained by "x"')}
+    if (checkOverlap(z, y)[1] == 0) {warning('"z" is not contained by "x"')}
     reportDistance <- TRUE
     var.ls[[(length(var.ls)+1)]] <- 'road_distance'
   } else {reportDistance <- FALSE}
@@ -92,16 +118,14 @@ rankPlots <- function(x, y, z, min.size=0, priority=c('class_count', 'patch_coun
     r <- crop(regions, y[j,])
     pc <- sum(freq(r)[,2] >= min.size)
     if (reportDistance) {
-      d <- apply(y[j,]@bbox, 1, mean)
-      xc <- d[1]
-      yc <- d[2]
-      dr <- SpatialPoints(cbind(xc, yc), proj4string=crs(z))
+      d <- spCentroid(y[j,])
+      dr <- SpatialPoints(cbind(d[1], d[2]), proj4string=crs(z))
       dr <- min(gDistance(dr, z, byid=TRUE))
     } else {
       xc <- NA
       yc <- NA
       dr <- NA}
-    return(data.frame(x=xc, y=yc, c1=cc, pc=pc, frequency=pf, distance=dr))}))
+    return(data.frame(x=d[1], y=d[2], c1=cc, pc=pc, frequency=pf, distance=dr))}))
 
   colnames(df.original) <- c('x', 'y', 'class_count', 'patch_count', 'pixel_frequency', 'road_distance')
 

@@ -4,7 +4,7 @@
 #' @param original.labels Vector of class \emph{character}.
 #' @param unique.original.labels Vector of class \emph{character}.
 #' @param unique.corrected.labels Vector of class \emph{character}.
-#' @return A \emph{character} vector with unique labels or a vector - or list of vectors - with corrected labels.
+#' @importFrom ggplot2 aes_string geom_bar theme_bw theme xlab ylab element_text
 #' @details {If \emph{unique.original.labels} and \emph{unique.corrected.labels} are missing, the function will return the unique values among
 #' all the elements of \emph{unique.original.labels}. Otherwise, the function will provide a corrected copy of \emph{unique.original.labels}.
 #' Aditionally, the function will count the number of records for each of the unique labels from which a plot will be built. The final output
@@ -13,8 +13,10 @@
 #'  \item{\emph{unique.labels} - Unique labels in the output.}
 #'  \item{\emph{corrected.labels} - Corrected labels in \emph{original.labels}.}
 #'  \item{\emph{label.count} - Count of occurrences in \emph{unique.labels} per each element in \emph{original.labels}.}
-#'   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}}
-#' @seealso \code{\link{checkSamples}}
+#'   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
+#' }
+#' @return A \emph{character} vector.
+#' @seealso \code{\link{assignClass}}
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -66,7 +68,7 @@ labelCheck <- function(original.labels, unique.original.labels, unique.corrected
 # 4. derive plot with unique labels per
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-  p <- ggplot(count, aes_string(x="label", y="count")) + geom_bar(stat="identity") + theme_bw() + xlab("\nLabel") + ylab("Frequency (N°)\n") +
+  p <- ggplot(count, aes_string(x="label", y="count")) + geom_bar(stat="identity") + theme_bw() + xlab("Label") + ylab("Frequency (Nr)") +
     theme(axis.text.x=element_text(angle=45, hjust=1), axis.title=element_text(size=12, face="bold"),
           axis.text=element_text(size=10), legend.title=element_text(size=12, face="bold"), legend.position="bottom")
 

@@ -7,6 +7,7 @@
 #' @param agg.radius Numeric element.
 #' @return A list.
 #' @importFrom raster crs rasterize which.max rowFromCell colFromCell extract
+#' @importFrom rsMove checkOverlap
 #' @details {For each class in \emph{z}, the function converts the elements in \emph{x} into a raster layer using \emph{y} as a basis. Then, 
 #' it aggregates all pixels that are within a given distance of each other - defined by \emph{agg.radius} using \code{\link{ccLabel}}. The 
 #' output is a list consisting of:
@@ -22,9 +23,9 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # read field data
-#' p <- shapefile(system.file("extdata", "fields.shp", package="fieldRS"))
+#' data(fielData)
 #' 
-#' agg.label <- splitSamples(p[1,], r, p$crop[1], agg.radius=90)
+#' agg.label <- splitSamples(fieldData[1,], r, fieldData$crop[1], agg.radius=90)
 #' 
 #' # show labels
 #' agg.label$region.id
@@ -77,8 +78,8 @@ splitSamples <- function(x, y, z, agg.radius=agg.radius) {
     
     # dilate image samples
     for (p in 1:length(ci)) {
-      rp <- rowFromCell(r, ci[p])
-      cp <- colFromCell(r, ci[p])
+      rp <- rowFromCell(y, ci[p])
+      cp <- colFromCell(y, ci[p])
       regions[(rp-agg.radius):(rp+agg.radius),(cp-agg.radius):(cp+agg.radius)]<- 1}
     
     # label regions
