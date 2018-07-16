@@ -17,58 +17,90 @@ knitr::opts_chunk$set(
 ```
 
 
-### Why develop fieldRS?
-`fieldRS`^[`fieldRS` was developed as part of the Opt4Environment project financed by the funded by the German Aerospace Center (DLR) on behalf of the Federal Ministry for Economic Affairs and Energy (BMWi) with the research grant 50 EE 1403. The movement data we used was provided by the Max Planck institute for Ornithology (MPIo).] was designed to ease the collection and management of ground truth data. It provides tools that help select sampling site, correct and pre-process training data and preview classification results.
+```{r echo=FALSE, message=FALSE}
+# load packages
+library(rsMove)
+library(raster)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+library(RStoolbox)
+```
 
+
+### Why develop fieldRS?
+<p align="justify" style="line-height:200%;">
+`fieldRS`^[`fieldRS` was developed as part of the project Research Network Water in Central Asia (CAWa) funded by the German Federal Foreign Office. It is part of the German Water Initiative for Central Asia (the so-called “Berlin process”), which the German Federal Foreign Office launched on 1 April 2008 in order to support peaceful, sustainable and mutually beneficial management of transboundary water resources in Central Asia.] was designed to ease the collection and management of ground truth data. It provides tools that help select sampling site, correct and pre-process training data and preview classification results.
+</p>
+
+</br>
+
+### Example data
+<p align="justify" style="line-height:200%;">
+`fieldRS` contains several raster and vector datasets that can be used to test its tools:
+</p>
+* `ndvi` - *RasterStack* with 5 time steps of Normalized Difference Vegetation Index (NDVI) images.
+
+* `fieldData` - *SpatialPolygonsDataFrame* containing ground truth data on crop types.
+
+* `referenceProfiles` - *data.frame* with NDVI profiles for target crop types.
+
+* `roads` - *SpatialLinesDataFrame* object with Open Street Map (OSM) street information.
+
+<p align="justify" style="line-height:200%;">
+Most data can be accessed with the `data()` function with the exception of the raster data. This is due to the fact that raster data is stored in the temporary memory when loaded and it can't be saved as an R object. Below we can see how to load each dataset into R.
+</p>
+
+``` {r message=FALSE}
+data(fieldData) # ground truth data
+data(roads) # road shapefile
+data(referenceProfiles) # target crop types NDVI profiles
+ndvi.ts <- brick(system.file("extdata", "ndvi.tif", package="fieldRS")) # NDVI raster time series
+```
+
+</br>
 
 ### Selection of sampling sites
+<p align="justify" style="line-height:200%;">
+When aiming for tasks such as land cover classification we try to sample from as many classes as possible in order to build a representative map. However, this is often made difficult by the lack of knowledge of the target area. When selecting sampling sites randomly, this lack of knowledge can lead us to visit homogeneous places that provide us with little information on the composition of the area we wish to classify. To help better select sampling sites we developed `rankPlots()`. This function uses raster and vector information to prioritize sampling sites based on certain, predefined criteria. As a basis, the function requires a equidistant grid that will define the potential sampling plots. To build this grid we can use the function `derivePlots()`. This function requires an object from which a spatial extent can be derived (e.g. *RasterLayer*, *SpatialPolygonsDataFrame*). Then, based on that extent, the function build a grid of square polygons where its size is predefined bz the user. In this example, we will build a grid with 1x1 km polygons.
+</p>
 
-
-
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
-
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
-
-## Vignette Info
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+``` {r  message=FALSE}
+plot.grid <- derivePlots(fieldData, 1000)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+<p align="justify" style="line-height:200%;">
+Additionally, `rankPlots()` requires raster information that provides an indication on the composition of the landscape. For example, the user can choose to use an existence land cover classification. However, when we don't have existent information at the spatial scale we wish to derive our own land cover map, it can be useful to build an unsupervised classification. To do this, we will use the `unsuperCLass()` function from the `RStoolbox` package. We will apply a K-means classifier over our NDVI time series and obtain a cluster image with 5 classes.
+</p>
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+``` {r message=FALSE}
+k.img <- unsuperClass(ndvi.ts, nSamples=5000, nClasses=5)$map
 ```
 
-Also a quote using `>`:
+<p align="justify" style="line-height:200%;">
+`rankPlots()` will use this unsupervised classification to evaluate the potential land cover composition of the landscape. For each potential sampling plot, it will evaluate its fragmentation based on the number of pixel clumps and their size as well as the number of represented classes. As an additional criteria, `rankPlots()` will allow the inclusion of road information. In practive, the function will evaluate the distance between the closest road and the center of the sampling plot. In this example, we can use the `roads` variable provided through `fieldRS`.
+</p>
+<p align="justify" style="line-height:200%;">
+Now that we collected all the reference data, we can use `rankPlots()` to identify priority sampling sites using the following criteria:
+</p>
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+* `class_count` - Priority given to the highest class count.
+
+* `pixel_frequency` - Priority given to the higuest non-NA pixel count.
+
+* `patch_count` - Priority given to the higuest patch count.
+
+* `road_distance` - Priority given to shortest distance.
+
+<p align="justify" style="line-height:200%;">
+While the function offers a set of predefined sorting criteria, the user can re-arrange them. Let's show this in action through two test cases. In our first example, we will give priority to the class and patch count. In other words, we will priority the analysis of the unsupervised classification ouput. In our second example, we will prioritize the distance to the roads. We will ignore the `pixel_frequency` criteria.
+</p>
+
+``` {r}
+
+
+```
+
+
+
+</br>
