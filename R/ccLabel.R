@@ -10,9 +10,9 @@
 #' value. Each group receives a distinct numeric label. The function provides two connected component labeling alogorithms:
 #' \itemize{
 #'  \item{\emph{simple} - Connects neighboring pixels with the same value. Suitable for categorical data.}
-#'  \item{\emph{space_change} - Estimates the MADE using a 3x3 moving window distinguishes neighboring pixels 
+#'  \item{\emph{spatial} - Estimates the MADE using a 3x3 moving window distinguishes neighboring pixels 
 #'  when the spatial change is lower than \emph{change.threshold}.}
-#'  #'  \item{\emph{time_change} - For each pixel, it estimates the percent difference between the minimum 
+#'  #'  \item{\emph{temporal} - For each pixel, it estimates the percent difference between the minimum 
 #'  and maximum values among all layers in \emph{x} and distinguishes spatially neighboring pixels when the 
 #'  temporal change is higher than \emph{change.threshold}.}}
 #' The final output of the function is a list consisting of:
@@ -28,11 +28,11 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # spatial change labeling
-#' or <- ccLabel(r[[1]], method="spatial_change", change.threshold=10)
+#' or <- ccLabel(r[[1]], method="spatial", change.threshold=10)
 #' plot(or$regions)
 #' 
 #' # temporal change labeling
-#' or <- ccLabel(r, method="temporal_change", change.threshold=10)
+#' or <- ccLabel(r, method="temporal", change.threshold=10)
 #' plot(or$regions)
 #' 
 #' }
@@ -48,19 +48,19 @@ ccLabel <- function(x, method='simple', change.threshold=NULL) {
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
   if (!class(x)[1] %in% c('RasterLayer', 'RasterStack', 'RasterBrick')) {stop('"x" is not a valid raster object')}
-  if (!method %in%  c('simple', 'spatial_change', 'temporal_change')) {stop('"method" is not a valid keyword')}
+  if (!method %in%  c('simple', 'spatial', 'temporal')) {stop('"method" is not a valid keyword')}
   
-  if (method == 'temporal_change' & class(x)[1]=='RasterLayer') {stop('"method" set to "temporal_change" ("x" should be a multi-band raster)')}
+  if (method == 'temporal' & class(x)[1]=='RasterLayer') {stop('"method" set to "temporal" ("x" should be a multi-band raster)')}
   
-  if (method %in% c('spatial_change', 'temporal_change')) {
+  if (method %in% c('spatial', 'temporal')) {
     if (is.null(change.threshold)) {stop(paste0('"method" set as ", ', method, '" (please specify "change.threshold")'))}
     if (!is.numeric(change.threshold)) {stop('"change.threshold" is not numeric')}
     if (length(change.threshold) > 1) {stop('"change.threshold" has more than one element')}
     
-    if (method == "spatial_change" & class(x)[1] != "RasterLayer") {
-      stop('"method" is set to "spatial_change", provide "x" as a RasterLayer')}
-    if (method == "temporal_change" & !class(x)[1] %in% c("RasterStack", "RasterBrick")) {
-      stop('"method" is set to "temporal_change", provide "x" as a RasterBrick or RasterStack')}
+    if (method == "spatial" & class(x)[1] != "RasterLayer") {
+      stop('"method" is set to "spatial", provide "x" as a RasterLayer')}
+    if (method == "temporal" & !class(x)[1] %in% c("RasterStack", "RasterBrick")) {
+      stop('"method" is set to "temporal", provide "x" as a RasterBrick or RasterStack')}
     
   }
 
@@ -85,12 +85,14 @@ ccLabel <- function(x, method='simple', change.threshold=NULL) {
 
   }
 
-  if (method == 'spatial_change') {regions <- clump(focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE) < change.threshold)
+  if (method == 'spatial') {regions <- clump(focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE) < change.threshold)
   regions[regions == 1] <- cellStats(regions, max) + 1}
   
-  if (method == 'temporal_change') {
+  if (method == 'temporal') {
     regions <- clump(calc(x, function(j) {(max(j, na.rm=TRUE)-min(j, na.rm=TRUE)) / min(j, na.rm=TRUE)*100}) > change.threshold)
     regions[regions == 1] <- cellStats(regions, max) + 1}
+  
+  regions[is.na(x)] <- NA # set NA pixels
   
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. return region image and region pixel frequency

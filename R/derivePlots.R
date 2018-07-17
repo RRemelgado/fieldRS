@@ -34,8 +34,8 @@ derivePlots <- function(x, y) {
   if (length(y) > 1) {stop('"y" has more than 1 element')}
 
   p <- rasterToPolygons(raster(extent(x), res=y, crs=crs(x))) # build grid
-  p <- crop(p, x) # crop grid by the reference object
-  p <- p[area(p)==c(y*y),] # filter cells with an area smaller than intended
+  p <- crop(p, extent(x)) # crop grid by the reference object
+  p <- p[round(area(p))==round(y*y),] # filter cells with an area smaller than intended
   
   return(p)
 

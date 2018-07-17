@@ -51,8 +51,6 @@ extractFields <- function(x) {
   rp <- rasterToPoints(x) # convert segmented raster to points
   uv <- unique(rp[,3]) # identify unique regions
   uv <- uv[!is.na(uv)] # remove NA values
-  pixel.area <- res(x) # pixel resolution
-  pixel.area <- pixel.area[1] * pixel.area[2] # pixel area
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. build polygons
@@ -66,8 +64,7 @@ extractFields <- function(x) {
     if (length(ic) > 2) {return(Polygons(list(Polygon(xy[c(ic,ic[1]),])), ID=u))} else {return(NULL)}})
 
   # remove unused entries and build SpatialPolygons
-  i <- sapply(pc, function(x) {!is.null(x)})
-  uv <- uv[i]
+  uv <- uv[sapply(pc, function(x) {!is.null(x)})]
   shp <- SpatialPolygons(pc[i], proj4string=crs(x))
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -78,7 +75,7 @@ extractFields <- function(x) {
   shp.info <- lapply(1:length(shp), function(i) {
     pp <- polyPerimeter(shp[i,])
     pa <- area(shp[i,])
-    return(list(ai=ai, pp=pp, pa=pa))})
+    return(list(pp=pp, pa=pa))})
 
   # build SpatialPolygonsDataFrame
   odf <- data.frame(ID=uv, sapply(shp.info, function(i) {i$pa}), pa=sapply(shp.info, function(i) {i$pp}))

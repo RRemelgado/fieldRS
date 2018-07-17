@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ```{r echo=FALSE, message=FALSE}
 # load packages
-library(rsMove)
+library(fieldRS)
 library(raster)
 library(ggplot2)
 library(knitr)
@@ -62,11 +62,13 @@ ndvi.ts <- brick(system.file("extdata", "ndvi.tif", package="fieldRS")) # NDVI r
 
 ### Selection of sampling sites
 <p align="justify" style="line-height:200%;">
-When aiming for tasks such as land cover classification we try to sample from as many classes as possible in order to build a representative map. However, this is often made difficult by the lack of knowledge of the target area. When selecting sampling sites randomly, this lack of knowledge can lead us to visit homogeneous places that provide us with little information on the composition of the area we wish to classify. To help better select sampling sites we developed `rankPlots()`. This function uses raster and vector information to prioritize sampling sites based on certain, predefined criteria. As a basis, the function requires a equidistant grid that will define the potential sampling plots. To build this grid we can use the function `derivePlots()`. This function requires an object from which a spatial extent can be derived (e.g. *RasterLayer*, *SpatialPolygonsDataFrame*). Then, based on that extent, the function build a grid of square polygons where its size is predefined bz the user. In this example, we will build a grid with 1x1 km polygons.
+When aiming for tasks such as land cover classification we try to sample from as many classes as possible in order to build a representative map. However, this is often made difficult by the lack of knowledge of the target area. When selecting sampling sites randomly, this lack of knowledge can lead us to visit homogeneous places that provide us with little information on the composition of the area we wish to classify. To help better select sampling sites we developed `rankPlots()`. This function uses raster and vector information to prioritize sampling sites based on certain, predefined criteria. As a basis, the function requires a equidistant grid that will define the potential sampling plots. To build this grid we can use the function `derivePlots()`. This function requires an object from which a spatial extent can be derived (e.g. *RasterLayer*, *SpatialPolygonsDataFrame*). Then, based on that extent, the function build a grid of square polygons where its size is predefined bz the user. In this example, we will build a grid with 1x1 km polygons. Looking at the output - shown below - we can see that the borders or the image are not considered. This is because those areas result in sampling plots smaller that the target 1x1 km size.
 </p>
 
 ``` {r  message=FALSE}
 plot.grid <- derivePlots(fieldData, 1000)
+plot(ndvi.ts[[1]]) # plot 1st NDVI image
+plot(plot.grid, add=TRUE) # overlap sampling plot grid
 ```
 
 <p align="justify" style="line-height:200%;">
@@ -75,6 +77,7 @@ Additionally, `rankPlots()` requires raster information that provides an indicat
 
 ``` {r message=FALSE}
 k.img <- unsuperClass(ndvi.ts, nSamples=5000, nClasses=5)$map
+plot(k.img)
 ```
 
 <p align="justify" style="line-height:200%;">
@@ -93,14 +96,90 @@ Now that we collected all the reference data, we can use `rankPlots()` to identi
 * `road_distance` - Priority given to shortest distance.
 
 <p align="justify" style="line-height:200%;">
-While the function offers a set of predefined sorting criteria, the user can re-arrange them. Let's show this in action through two test cases. In our first example, we will give priority to the class and patch count. In other words, we will priority the analysis of the unsupervised classification ouput. In our second example, we will prioritize the distance to the roads. We will ignore the `pixel_frequency` criteria.
+While the function offers a set of predefined sorting criteria, the user can re-arrange them. Let's show this in action through two test cases. In our first example, we will give priority to the class and patch count. In other words, we will priority the analysis of the unsupervised classification ouput. In our second example, we will prioritize the distance to the roads. The output will be added to the `plot.grid` shapefile we previously created.
+</p>
+
+``` {r message=FALSE}
+# example 1
+plot.grid_1 <- plot.grid
+plot.grid_1@data <- rankPlots(k.img, plot.grid, roads, priority=c('class_count', 'patch_count', 'road_distance'))
+kable_styling(kable(head(plot.grid_1@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
+
+# example
+plot.grid_2 <- plot.grid
+plot.grid_2@data <- rankPlots(k.img, plot.grid, roads, priority=c('road_distance', 'class_count', 'patch_count'))
+kable_styling(kable(head(plot.grid_2@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
+```
+
+<p align="justify" style="line-height:200%;">
+Now let's plot and compare the output grids colored by the ranking. Below we can see the output for example 1 (above) and example 2 (below).
+</p>
+
+```{r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
+gp <- fortify(plot.grid_1, region="ranking")
+ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + geom_polygon() + scale_fill_continuous(name="Ranking")
+
+gp <- fortify(plot.grid_1, region="ranking")
+ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + geom_polygon() + scale_fill_continuous(name="Ranking")
+```
+
+</br>
+
+### Automated field extraction
+<p align="justify" style="line-height:200%;">
+Once we identifiy target sampling sites we can `fieldRS` to select concrete polygons to sample from. For example, if our aim is to map crop types, these polygons might coincide with field parcels. To extract these areas we are going to combine `ccLabel()`and `extractFields()`. `ccLabel()` will allow us to segment a raster image based on the difference between neighboring pixels. The function will call the `mape()` function and, for each pixel, will estimate the Mean Absolute Percent Deviation (MAPE) between it and its emidiate neighbors using a 3x3 moving window. After iterating through all the pixels in a raster image, the function will apply a user defined threshold to identify breaks between neighboring field parcels and label each of them using the function `clump()` from the `raster` package. In this example, we will use a change threshold of 5%. This means that a pixel will be split from its neighbor if the difference between its value is equal or higher than 5% when compared agains the mean estimated between itself and its neighbors. We will perform this analysis over a maximum NDVI composite estimate with `ndvi.ts`.
+</p>
+
+``` {r message=FALSE}
+ndvi.max <- calc(ndvi.ts, max, na.rm=TRUE) # derive maximum NDVI composite)
+seg.img <- ccLabel(ndvi.max, method="spatial", change.threshold=5)$regions # segment NDVI image
+ploplot(seg.img)
+```
+
+<p align="justify" style="line-height:200%;">
+Now we can `erosionFilter()` to remove small clumps that are likely related to mixed-pixels.
+</p>
+
+```{r message=FALSE}
+seg.img <- erosionFilter(seg.img)
+```
+
+<p align="justify" style="line-height:200%;">
+Finally, we will use `extractFields()` to derive polygons for each segment. This function will draw a polygon based on the extent of each segment. This can be useful when dealing with noisy images as the ones used in this example. However, as the plot below shows, the output might still require some manual editing.
+</p>
+
+``` {r message=FALSE}
+fields <- extractFields(seg.img)
+plot(fields, col="red", add=TRUE)
+```
+
+</br>
+
+### Check field samples
+<p align="justify" style="line-height:200%;">
+Once we collect our field data we will often notice some inconsistencies. This is quite common when collecting categorical data be it either due to misspealings or due to the ocasional capitalization of labels. When processing the field data in platforms such as R, this can be problematic since misspeled words will be treated as new classes. To aid in solving such issues we developed `labelCheck()`. First, we provide the function with a vector of the original labels prompting the function to report on the unique classes and on their frequency distribution.
 </p>
 
 ``` {r}
+unique.crop <- labelCheck(fieldData$crop)
+kable_styling(kable(head(unique.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
+plot(unique.crop$label.count.plot) # show label frequency plot
+unique.crop$labels # show unique labels
+```
 
+<p align="justify" style="line-height:200%;">
+The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspealings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared agains the unique labels reported by the function.
+</p>
 
+``` {r}
+labelCheck(fieldData$crop, unique.crop$unique.labels, c("not-wheat", "not-wheat", "wheat"))
 ```
 
 
-
 </br>
+
+### 
+<p align="justify" style="line-height:200%;">
+
+</p>
+

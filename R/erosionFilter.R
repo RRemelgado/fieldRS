@@ -51,7 +51,7 @@ erosionFilter <- function(x) {
   
   for (i in 1:length(ur)) {
     
-    tmp <- or$regions
+    tmp <- x
     tmp[tmp != ur[i]] <- NA
     f <- focal(tmp, matrix(1, 3, 3), relative.freq)
     f[f != 1] <- NA

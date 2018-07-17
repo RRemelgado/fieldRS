@@ -99,9 +99,7 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
   if (!is.character(priority)) {stop('"priority" is not a character vector')}
   if (sum(priority %in% c('class_count', 'pixel_frequency', 'patch_count', 'road_distance'))!=length(priority)) {
     stop('"priority" has one or more invalid keywords')}
-  if (length(priority) != length(var.ls)) {
-    priority <- priority[priority %in% var.ls]
-    warning('some variables required by "priority" are missing (variable list updated)')}
+  priority <- priority[priority %in% var.ls]
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 2. analyze plots
@@ -118,7 +116,7 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
     r <- crop(regions, y[j,])
     pc <- sum(freq(r)[,2] >= min.size)
     if (reportDistance) {
-      d <- spCentroid(y[j,])
+      d <- spCentroid(y[j,])@coords
       dr <- SpatialPoints(cbind(d[1], d[2]), proj4string=crs(z))
       dr <- min(gDistance(dr, z, byid=TRUE))
     } else {

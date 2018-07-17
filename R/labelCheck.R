@@ -1,18 +1,18 @@
 #' @title labelCheck
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #' @description helps fix spelling mistakes in the labels of a set of samples.
-#' @param original.labels Vector of class \emph{character}.
-#' @param unique.original.labels Vector of class \emph{character}.
-#' @param unique.corrected.labels Vector of class \emph{character}.
+#' @param x Vector of class \emph{character}.
+#' @param y Vector of class \emph{character}.
+#' @param z Vector of class \emph{character}.
 #' @importFrom ggplot2 aes_string geom_bar theme_bw theme xlab ylab element_text
-#' @details {If \emph{unique.original.labels} and \emph{unique.corrected.labels} are missing, the function will return the unique values among
-#' all the elements of \emph{unique.original.labels}. Otherwise, the function will provide a corrected copy of \emph{unique.original.labels}.
+#' @details {If \emph{y} and \emph{z} are missing, the function will return the unique values among
+#' all the elements of \emph{y}. Otherwise, the function will provide a corrected copy of \emph{y}.
 #' Aditionally, the function will count the number of records for each of the unique labels from which a plot will be built. The final output
 #' consists of:
 #' \itemize{
 #'  \item{\emph{unique.labels} - Unique labels in the output.}
-#'  \item{\emph{corrected.labels} - Corrected labels in \emph{original.labels}.}
-#'  \item{\emph{label.count} - Count of occurrences in \emph{unique.labels} per each element in \emph{original.labels}.}
+#'  \item{\emph{corrected.labels} - Corrected labels in \emph{x}.}
+#'  \item{\emph{label.count} - Count of occurrences in \emph{unique.labels} per each element in \emph{x}.}
 #'   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
 #' }
 #' @return A \emph{character} vector.
@@ -22,25 +22,24 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-labelCheck <- function(original.labels, unique.original.labels, unique.corrected.labels) {
+labelCheck <- function(x, y, z) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. check variables
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
   # check original labels
-  if (!is.character(original.labels)) {stop('"original.labels" is not a character vector')}
-
-  # compare original and corrected labels
-  if (exists("unique.original.labels") & !exists("unique.corrected.labels")) {
-    stop('"unique.original.labels" provided but missing "unique.corrected.labels" (Remove or assign both)')}
-  if (exists("unique.original.labels") & !exists("unique.corrected.labels")) {
-    if (sum(duplicated(unique.original.labels)) > 0) {stop('duplicated records in "unique.original.labels"')}
-    if (sum(duplicated(unique.original.labels)) > 0) {stop('duplicated records in "unique.original.labels"')}
-    if (length(unique.original.labels) != length(unique.corrected.labels)) {
-      stop('"unique.original.labels" and "unique.corrected.labels" have different lengths')}
-    correct = TRUE}
-  if (!exists("unique.original.labels") & !exists("unique.corrected.labels")) {correct <- FALSE}
+  if (!is.character(x)) {stop('"x" is not a character vector')}
+  
+  # check reference labels
+  if (exists("y") & exists("z")) {
+    if (length(y) != length(z)) {stop('"y" and "z" have different lengths')}
+    if (sum(y %in% x) != length(y)) {stop('one or more labels in "y" do not exist in "x"')}
+    if (sum(x %in% y) != length(x)) {stop('one or more labels in "x" do not exist in "y"')}
+    correct <- TRUE
+  } else {
+    correct <- FALSE
+  }
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 2. identify / correct unique labels
@@ -48,21 +47,21 @@ labelCheck <- function(original.labels, unique.original.labels, unique.corrected
 
   # no correction needed (return unique values)
   if (!correct) {
-    unique.labels <- unique(original.labels)
-    if (sum(is.na(unique.labels)) > 0) {stop('NA values found in shapefile (please fix before proceeding)')}}
+    labels <- unique(x)
+    if (sum(is.na(labels)) > 0) {stop('NA values found in shapefile (please fix before proceeding)')}}
 
   # correction needed (update original labels with corrected values)
   if (correct) {
-    for (l in 1:length(unique.original.labels)) {
-      i <- which(original.labels == original.labels[l])
-      if (length(i) > 0) {original.labels[i] <- unique.corrected.labels[l]}}
-    unique.labels <- unique.corrected.labels}
+    for (l in 1:length(y)) {
+      i <- which(x == x[l])
+      if (length(i) > 0) {x[i] <- z[l]}}
+    labels <- x}
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. count unique values
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-  count <- data.frame(count=sapply(unique.labels, function(l) {sum(original.labels==l, na.rm=TRUE)}), label=unique.labels)
+  count <- data.frame(count=sapply(labels, function(l) {sum(x==l, na.rm=TRUE)}), label=labels)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 4. derive plot with unique labels per
@@ -77,6 +76,6 @@ labelCheck <- function(original.labels, unique.original.labels, unique.corrected
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
   # derive output
-  return(list(unique.labels=unique.labels, label.count=count, label.count.plot=p))
+  return(list(labels=labels, label.count=count, label.count.plot=p))
 
 }
