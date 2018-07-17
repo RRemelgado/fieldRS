@@ -223,11 +223,24 @@ ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
 
 ### Finding sampling mistakes through machine-learning
 <p align="justify" style="line-height:200%;">
-Before we derive a classified map it can be useful to first visualize the performance of a predictive model using our training data. This can be useful to evaluate the need for more samples. But it also tells us something about the quality of our samples. Knowing which samples were not successfully predicted can point us in the direction of polygons that were poorly drawn or labeled. To address this need, we can use `classModel()`. This function provides a wraper for the `train()` function of the `caret` package. Just as in `train()`, our function requires a `data.frame` with training data and a `numeric vector` with the target categorical/continuous variable. In additon, `classMove()` allows us to provide vector that groups the samples. This can be the unique indentifier of each polygon that is associated to each sample as returned by `poly2sample()` and `raster2sample()`. Let's consider the output of the first. We will use `classModel()` with `Random Forest`classifier to classify the crop types in `fieldData` relabeled in a previous step (i.e. "wheat" and "no-wheat"). As predictors, we will use `ndvi.ts`.
+Before we derive a classified map it can be useful to first visualize the performance of a predictive model using our training data. This can be useful to evaluate the need for more samples. But it also tells us something about the quality of our samples. Knowing which samples were not successfully predicted can point us in the direction of polygons that were poorly drawn or labeled. To address this need, we can use `classModel()`. This function provides a wraper for the `train()` function of the `caret` package. Just as in `train()`, our function requires a `data.frame` with training data and a `numeric vector` with the target categorical/continuous variable. In additon, `classMove()` allows us to provide vector that groups the samples. This can be the unique indentifier of each polygon that is associated to each sample as returned by `poly2sample()` and `raster2sample()`. Let's consider the output of the first. We will use `classModel()` with `Random Forest`classifier to classify the crop types in `fieldData` relabeled in a previous step (i.e. "wheat" and "no-wheat"). As predictors, we will use `ndvi.ts`. Given that this operation can be time consuming for a large amount of samples, we will average the samples for each polygon across each layer in `ndvi.ts` using `apply()`.
 </p>
 
 ```{r message=FALSE}
 predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
-crop.types <- fieldData$crop_2[samples1$id] # crop type vector
-predictive.model <- classModel(as.data.frame(predictor.df), crop.types, samples1$id)
+ids <- unique(samples1$id) # polygon id's
+predictor.df <- do.call(rbind, lapply(ids, function(u) {
+  i <- which(samples1$id == u)
+  return(as.vector(apply(predictor.df[i,], 2, mean, na.rm=TRUE)))})) # summarize on field level
+crop.types <- fieldData$crop_2[ids] # crop type vector
+predictive.model <- classModel(as.data.frame(predictor.df), crop.types, ids)
+```
+
+### Finding sampling mistakes through machine-learning
+For each class, the function identified the corresponding polygons and iterated through each polygon keeping it for validation while using the remaining ones for training. Then, the function recorded if the class of this polygon was succefully predicted. Finally, for each class, the function derived an aggregated F1-score - based on all true and false positives and negatives - and reported on the accuracy of each polygon. Below we can see the results of this anlysis. polygons colored red in the plot weren't succefully predicted by the classifier.
+
+```{r echo=FALSE}
+kable_styling(kable(head(predictive.model$overall.validation, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
+plot(fieldData)
+plot(fieldData[!fieldData$validation,], col="red", add=TRUE)
 ```
