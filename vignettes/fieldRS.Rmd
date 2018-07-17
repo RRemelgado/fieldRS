@@ -62,7 +62,7 @@ ndvi.ts <- brick(system.file("extdata", "ndvi.tif", package="fieldRS")) # NDVI r
 
 ### Selection of sampling sites
 <p align="justify" style="line-height:200%;">
-When aiming for tasks such as land cover classification we try to sample from as many classes as possible in order to build a representative map. However, this is often made difficult by the lack of knowledge of the target area. When selecting sampling sites randomly, this lack of knowledge can lead us to visit homogeneous places that provide us with little information on the composition of the area we wish to classify. To help better select sampling sites we developed `rankPlots()`. This function uses raster and vector information to prioritize sampling sites based on certain, predefined criteria. As a basis, the function requires a equidistant grid that will define the potential sampling plots. To build this grid we can use the function `derivePlots()`. This function requires an object from which a spatial extent can be derived (e.g. *RasterLayer*, *SpatialPolygonsDataFrame*). Then, based on that extent, the function build a grid of square polygons where its size is predefined bz the user. In this example, we will build a grid with 1x1 km polygons. Looking at the output - shown below - we can see that the borders or the image are not considered. This is because those areas result in sampling plots smaller that the target 1x1 km size.
+When aiming for tasks such as land cover classification we try to sample from as many classes as possible in order to build a representative map. However, this is often made difficult by the lack of knowledge of the target area. When selecting sampling sites randomly, this lack of knowledge can lead us to visit homogeneous places that provide us with little information on the composition of the area we wish to classify. To help better select sampling sites we developed `rankPlots()`. This function uses raster and vector information to prioritize sampling sites based on certain, predefined criteria. As a basis, the function requires a equidistant grid that will define the potential sampling plots. To build this grid we can use the function `derivePlots()`. This function requires an object from which a spatial extent can be derived (e.g. *RasterLayer*, *SpatialPolygonsDataFrame*). Then, based on that extent, the function build a grid of square polygons where its size is predefined by the user. In this example, we will build a grid with 1x1 km polygons. Looking at the output - shown below - we can see that the borders or the image are not considered. This is because those areas result in sampling plots smaller that the target 1x1 km size.
 </p>
 
 ``` {r  message=FALSE}
@@ -81,7 +81,7 @@ plot(k.img)
 ```
 
 <p align="justify" style="line-height:200%;">
-`rankPlots()` will use this unsupervised classification to evaluate the potential land cover composition of the landscape. For each potential sampling plot, it will evaluate its fragmentation based on the number of pixel clumps and their size as well as the number of represented classes. As an additional criteria, `rankPlots()` will allow the inclusion of road information. In practive, the function will evaluate the distance between the closest road and the center of the sampling plot. In this example, we can use the `roads` variable provided through `fieldRS`.
+`rankPlots()` will use this unsupervised classification to evaluate the potential land cover composition of the landscape. For each potential sampling plot, it will evaluate its fragmentation based on the number of pixel clumps and their size as well as the number of represented classes. As an additional criteria, `rankPlots()` will allow the inclusion of road information. In practice, the function will evaluate the distance between the closest road and the centre of the sampling plot. In this example, we can use the `roads` variable provided through `fieldRS`.
 </p>
 <p align="justify" style="line-height:200%;">
 Now that we collected all the reference data, we can use `rankPlots()` to identify priority sampling sites using the following criteria:
@@ -96,7 +96,7 @@ Now that we collected all the reference data, we can use `rankPlots()` to identi
 * `road_distance` - Priority given to shortest distance.
 
 <p align="justify" style="line-height:200%;">
-While the function offers a set of predefined sorting criteria, the user can re-arrange them. Let's show this in action through two test cases. In our first example, we will give priority to the class and patch count. In other words, we will priority the analysis of the unsupervised classification ouput. In our second example, we will prioritize the distance to the roads. The output will be added to the `plot.grid` shapefile we previously created.
+While the function offers a set of predefined sorting criteria, the user can re-arrange them. Let's show this in action through two test cases. In our first example, we will give priority to the class and patch count. In other words, we will priority the analysis of the unsupervised classification output. In our second example, we will prioritize the distance to the roads. The output will be added to the `plot.grid` shapefile we previously created.
 </p>
 
 ``` {r message=FALSE}
@@ -112,7 +112,7 @@ kable_styling(kable(head(plot.grid_2@data, 5), format="html", align="c", full_wi
 ```
 
 <p align="justify" style="line-height:200%;">
-Now let's plot and compare the output grids colored by the ranking. Below we can see the output for example 1 (above) and example 2 (below).
+Now let's plot and compare the output grids coloured by the ranking. Below we can see the output for example 1 (above) and example 2 (below).
 </p>
 
 ```{r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
@@ -127,7 +127,7 @@ ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + geom_polyg
 
 ### Automated field extraction
 <p align="justify" style="line-height:200%;">
-Once we identifiy target sampling sites we can `fieldRS` to select concrete polygons to sample from. For example, if our aim is to map crop types, these polygons might coincide with field parcels. To extract these areas we are going to combine `ccLabel()`and `extractFields()`. `ccLabel()` will allow us to segment a raster image based on the difference between neighboring pixels. The function will call the `mape()` function and, for each pixel, will estimate the Mean Absolute Percent Deviation (MAPE) between it and its emidiate neighbors using a 3x3 moving window. After iterating through all the pixels in a raster image, the function will apply a user defined threshold to identify breaks between neighboring field parcels and label each of them using the function `clump()` from the `raster` package. In this example, we will use a change threshold of 5%. This means that a pixel will be split from its neighbor if the difference between its value is equal or higher than 5% when compared agains the mean estimated between itself and its neighbors. We will perform this analysis over a maximum NDVI composite estimate with `ndvi.ts`.
+Once we identify target sampling sites we can `fieldRS` to select concrete polygons to sample from. For example, if our aim is to map crop types, these polygons might coincide with field parcels. To extract these areas we are going to combine `ccLabel()`and `extractFields()`. `ccLabel()` will allow us to segment a raster image based on the difference between neighbouring pixels. The function will call the `mape()` function and, for each pixel, will estimate the Mean Absolute Percent Deviation (MAPE) between it and its immediate neighbours using a 3x3 moving window. After iterating through all the pixels in a raster image, the function will apply a user defined threshold to identify breaks between neighbouring field parcels and label each of them using the function `clump()` from the `raster` package. In this example, we will use a change threshold of 5%. This means that a pixel will be split from its neighbour if the difference between its value is equal or higher than 5% when compared against the mean estimated between itself and its neighbours. We will perform this analysis over a maximum NDVI composite estimate with `ndvi.ts`.
 </p>
 
 ``` {r message=FALSE}
@@ -161,7 +161,7 @@ plot(fields, border="red", add=TRUE)
 
 ### Check field samples
 <p align="justify" style="line-height:200%;">
-Once we collect our field data we will often notice some inconsistencies. This is quite common when collecting categorical data be it either due to misspealings or due to the ocasional capitalization of labels. When processing the field data in platforms such as R, this can be problematic since misspeled words will be treated as new classes. To aid in solving such issues we developed `labelCheck()`. First, we provide the function with a vector of the original labels prompting the function to report on the unique classes and on their frequency distribution.
+Once we collect our field data we will often notice some inconsistencies. This is quite common when collecting categorical data be it either due to misspellings or due to the occasional capitalization of labels. When processing the field data in platforms such as R, this can be problematic since misspelled words will be treated as new classes. To aid in solving such issues we developed `labelCheck()`. First, we provide the function with a vector of the original labels prompting the function to report on the unique classes and on their frequency distribution.
 </p>
 
 ``` {r}
@@ -172,7 +172,7 @@ unique.crop$labels # show unique labels
 ```
 
 <p align="justify" style="line-height:200%;">
-The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspealings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared agains the unique labels reported by the function. This way, the slot `labels` will provide the corrected labels instead of the unique values. We can assign this output to the `fieldData`. Additionally, it will offer us a statistical account of the samples as done before based on the new classes.
+The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspellings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared against the unique labels reported by the function. This way, the slot `labels` will provide the corrected labels instead of the unique values. We can assign this output to the `fieldData`. Additionally, it will offer us a statistical account of the samples as done before based on the new classes.
 </p>
 
 ``` {r message=FALSE}
@@ -181,18 +181,18 @@ fieldData$crop_2 <- corrected.labels$labels
 ```
 
 ``` {r echo=FALSE}
-kable_styling(kable(head(corrected.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
-plot(corrected.crop$label.count.plot) # show label frequency plot
+kable_styling(kable(head(corrected.labels$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
+plot(corrected.labels$label.count.plot) # show label frequency plot
 ```
 
 </br>
 
 ### Translating field data to samples
 <p align="justify" style="line-height:200%;">
-After collecting field data we need to translate it into usable samples. `fieldRS` offers tools to extract the pixels overlapping with the ground-truth data and evaluate their consistency. For example, if we are dealing with vectorized polygons, the pixels located along the borders of the polygons can be misleading. For example, if we are dealing with crop mapping, the spectral signature of border pixels can protrait neighboring fields with different crop types. To aid on the selection of usable pixels we can use `poly2sample()`. For each polygon, the function will identify the overlapping pixels and, for each pixel, will quantify the percentage of its area that is overlapping with the polygon. Using this information, the user can easily ignore mixed pixels. In this example, we will prompt the function to filter out all the pixels with a percent cover lower than 50%.  
+After collecting field data we need to translate it into usable samples. `fieldRS` offers tools to extract the pixels overlapping with the ground-truth data and evaluate their consistency. For example, if we are dealing with vectorized polygons, the pixels located along the borders of the polygons can be misleading. For example, if we are dealing with crop mapping, the spectral signature of border pixels can portrait neighbouring fields with different crop types. To aid on the selection of usable pixels we can use `poly2sample()`. For each polygon, the function will identify the overlapping pixels and, for each pixel, will quantify the percentage of its area that is overlapping with the polygon. Using this information, the user can easily ignore mixed pixels. In this example, we will prompt the function to filter out all the pixels with a percent cover lower than 50%.  
 </p>
 
-```{r eval=FALSE}
+```{r message=FALSE}
 samples1 <- poly2sample(fieldData, seg.img, min.cover=50)
 ```
 
@@ -223,7 +223,7 @@ ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
 
 ### Finding sampling mistakes through machine-learning
 <p align="justify" style="line-height:200%;">
-Before we derive a classified map it can be useful to first visualize the performance of a predictive model using our training data. This can be useful to evaluate the need for more samples. But it also tells us something about the quality of our samples. Knowing which samples were not successfully predicted can point us in the direction of polygons that were poorly drawn or labeled. To address this need, we can use `classModel()`. This function provides a wraper for the `train()` function of the `caret` package. Just as in `train()`, our function requires a `data.frame` with training data and a `numeric vector` with the target categorical/continuous variable. In additon, `classMove()` allows us to provide vector that groups the samples. This can be the unique indentifier of each polygon that is associated to each sample as returned by `poly2sample()` and `raster2sample()`. Let's consider the output of the first. We will use `classModel()` with `Random Forest`classifier to classify the crop types in `fieldData` relabeled in a previous step (i.e. "wheat" and "no-wheat"). As predictors, we will use `ndvi.ts`. Given that this operation can be time consuming for a large amount of samples, we will average the samples for each polygon across each layer in `ndvi.ts` using `apply()`.
+Before we derive a classified map it can be useful to first visualize the performance of a predictive model using our training data. This can be useful to evaluate the need for more samples. But it also tells us something about the quality of our samples. Knowing which samples were not successfully predicted can point us in the direction of polygons that were poorly drawn or labelled. To address this need, we can use `classModel()`. This function provides a wrapper for the `train()` function of the `caret` package. Just as in `train()`, our function requires a `data.frame` with training data and a `numeric vector` with the target categorical/continuous variable. In addition, `classMove()` allows us to provide vector that groups the samples. This can be the unique identifier of each polygon that is associated to each sample as returned by `poly2sample()` and `raster2sample()`. Let's consider the output of the first. We will use `classModel()` with `Random Forest`classifier to classify the crop types in `fieldData` relabelled in a previous step (i.e. "wheat" and "no-wheat"). As predictors, we will use `ndvi.ts`. Given that this operation can be time consuming for a large amount of samples, we will average the samples for each polygon across each layer in `ndvi.ts` using `apply()`.
 </p>
 
 ```{r message=FALSE}
@@ -237,10 +237,11 @@ predictive.model <- classModel(as.data.frame(predictor.df), crop.types, ids)
 ```
 
 ### Finding sampling mistakes through machine-learning
-For each class, the function identified the corresponding polygons and iterated through each polygon keeping it for validation while using the remaining ones for training. Then, the function recorded if the class of this polygon was succefully predicted. Finally, for each class, the function derived an aggregated F1-score - based on all true and false positives and negatives - and reported on the accuracy of each polygon. Below we can see the results of this anlysis. polygons colored red in the plot weren't succefully predicted by the classifier.
+For each class, the function identified the corresponding polygons and iterated through each polygon keeping it for validation while using the remaining ones for training. Then, the function recorded if the class of this polygon was successfully predicted. Finally, for each class, the function derived an aggregated F1-score - based on all true and false positives and negatives - and reported on the accuracy of each polygon. Below we can see the results of this anlysis. polygons colored red in the plot weren't successfully predicted by the classifier.
 
 ```{r echo=FALSE}
 kable_styling(kable(head(predictive.model$overall.validation, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
+fieldData <- fieldData[ids,]
 plot(fieldData)
-plot(fieldData[!fieldData$validation,], col="red", add=TRUE)
+plot(fieldData[!predictive.model$sample.validation,], col="red", add=TRUE)
 ```

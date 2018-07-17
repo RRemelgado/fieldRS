@@ -23,7 +23,12 @@ A \emph{SpatialPointsDataFrame} with sampled pixels reporting on pixel compactne
 {\emph{poly2Sample} extends on the \code{\link[raster]{RasterToPoint}} function from the raster package. For 
 each non-NA pixel in \emph{x}, the function will use 3x3 moving window and report on the frequency of non-NA pixels. 
 This can be useful to identify "pure" samples within a clump of pixels (i.e. high frequency) as well as mixed pixels 
-along their borders (i.e. low frequency).}
+along their borders (i.e. low frequency). The output is a \emph{SpatialPointsDataFrame} reporting on:
+\itemize{
+ \item{\emph{x} - x coordinate.}
+ \item{\emph{y} - y coordinate.}
+ \item{\emph{cover} - Non-NA value frequency.}
+ \item{\emph{id} - Corresponding raster value in \emph{x}.}}}
 }
 \examples{
 {
@@ -41,5 +46,5 @@ along their borders (i.e. low frequency).}
 }
 }
 \seealso{
-\code{\link{dataQuery}} \code{\link{imgInt}}
+[rsMove:poly2sample()] \code{\link{ccLabel}}
 }

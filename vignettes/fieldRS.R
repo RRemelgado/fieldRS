@@ -54,3 +54,20 @@ plot(seg.img)
 ## ----message=FALSE-------------------------------------------------------
 seg.img <- erosionFilter(seg.img)
 
+## ----message=FALSE-------------------------------------------------------
+fields <- extractFields(seg.img)
+
+## ----echo=FALSE----------------------------------------------------------
+plot(seg.img)
+plot(fields, border="red", add=TRUE)
+
+## ------------------------------------------------------------------------
+unique.crop <- labelCheck(fieldData$crop)
+kable_styling(kable(head(unique.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
+plot(unique.crop$label.count.plot) # show label frequency plot
+unique.crop$labels # show unique labels
+
+## ----message=FALSE-------------------------------------------------------
+corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
+fieldData$crop_2 <- corrected.labels$labels
+
