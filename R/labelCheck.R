@@ -16,7 +16,7 @@
 #'   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
 #' }
 #' @return A \emph{character} vector.
-#' @seealso \code{\link{assignClass}}
+#' @seealso \code{\link{extractFields}}
 #' @export
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -63,7 +63,7 @@ labelCheck <- function(x, y, z) {
   # 4. derive plot with unique labels per
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   
-  p <- ggplot(count, aes_string(x="label", y="count")) + geom_bar(stat="identity") + theme_bw() + xlab("\nLabel") + ylab("Frequency (NÂ°)\n") +
+  p <- ggplot(count, aes_string(x="label", y="count")) + geom_bar(stat="identity") + theme_bw() + xlab("\nLabel") + ylab("Frequency (Nr.)\n") +
     theme(axis.text.x=element_text(angle=45, hjust=1), axis.title=element_text(size=12, face="bold"),
           axis.text=element_text(size=10), legend.title=element_text(size=12, face="bold"), legend.position="bottom")
   

@@ -67,5 +67,5 @@ classModel(ev, c, l$region.id)
 }
 }
 \seealso{
-\code{\link{splitSamples}} \code{\link{ccLabel}}
+\code{\link{raster2sample}} \link[rsMove]{poly2sample} \code{\link{ccLabel}}
 }

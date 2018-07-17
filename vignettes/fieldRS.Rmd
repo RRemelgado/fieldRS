@@ -25,6 +25,7 @@ library(ggplot2)
 library(knitr)
 library(kableExtra)
 library(RStoolbox)
+library(rsMove)
 ```
 
 

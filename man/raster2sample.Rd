@@ -8,10 +8,6 @@ raster2sample(x)
 }
 \arguments{
 \item{x}{Object of class \emph{SpatialPolygons} or \emph{SpatialPolygonDataFrame}.}
-
-\item{y}{A raster object or a numeric element.}
-
-\item{min.cover}{Minimum percent a pixel should be covered by a polygon for sampling (1-100). Default is 1.}
 }
 \value{
 A \emph{SpatialPointsDataFrame} with sampled pixels reporting on pixel compactness.
@@ -20,7 +16,7 @@ A \emph{SpatialPointsDataFrame} with sampled pixels reporting on pixel compactne
 {Converts a raster grid to points.}
 }
 \details{
-{\emph{poly2Sample} extends on the \code{\link[raster]{RasterToPoint}} function from the raster package. For 
+{\emph{poly2Sample} extends on the \code{\link[raster]{rasterToPoints}} function from the raster package. For 
 each non-NA pixel in \emph{x}, the function will use 3x3 moving window and report on the frequency of non-NA pixels. 
 This can be useful to identify "pure" samples within a clump of pixels (i.e. high frequency) as well as mixed pixels 
 along their borders (i.e. low frequency). The output is a \emph{SpatialPointsDataFrame} reporting on:
@@ -46,5 +42,5 @@ along their borders (i.e. low frequency). The output is a \emph{SpatialPointsDat
 }
 }
 \seealso{
-[rsMove:poly2sample()] \code{\link{ccLabel}}
+\link[rsMove]{poly2sample} \code{\link{ccLabel}}
 }

@@ -32,5 +32,5 @@ consists of:
 }
 }
 \seealso{
-\code{\link{assignClass}}
+\code{\link{extractFields}}
 }

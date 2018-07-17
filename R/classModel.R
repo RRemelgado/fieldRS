@@ -10,6 +10,7 @@
 #' @importFrom caret train
 #' @importFrom ggplot2 ggplot aes_string theme_bw ylim
 #' @importFrom rsMove checkOverlap
+#' @importFrom stats cor
 #' @details {Uses \link[caret]{train} to derive a predictive model based on \emph{x} - which contains the predictors - and \emph{y} - which
 #' contains information on the target classes (if \emph{mode} is "classification") or values (if \emph{mode} is "regression"). This method
 #' iterates through all samples making sure that all contribute for the final accuracy. To specify how the samples should be split, the user
@@ -25,7 +26,7 @@
 #'  \item{\emph{sample.validation} - Accuracy assessment of each sample.}
 #'  \item{\emph{overall.validation} - Finally accuracy value for each class (if "classification").}
 #'  \item{\emph{r2} - Correlation between \emph{y} and the predicted values (if "regression")}}}
-#' @seealso \code{\link{splitSamples}} \code{\link{ccLabel}}
+#' @seealso \code{\link{raster2sample}} \link[rsMove]{poly2sample} \code{\link{ccLabel}}
 #' @examples \dontrun{
 #' 
 #' require(raster)

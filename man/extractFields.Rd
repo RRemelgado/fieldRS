@@ -36,7 +36,7 @@ require(raster)
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
 # spatial change labeling
-or <- ccLabel(r[[1]], method="spatial_change", change.threshold=10)$regions
+or <- ccLabel(r[[1]], method="spatial", change.threshold=10)$regions
 
 # convert to polygons and plot
 ef <- extractFields(or)
