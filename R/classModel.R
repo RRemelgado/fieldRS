@@ -24,7 +24,7 @@
 #' \itemize{
 #'  \item{\emph{sample.validation} - Accuracy assessment of each sample.}
 #'  \item{\emph{overall.validation} - Finally accuracy value for each class (if "classification").}
-#'  \item{\emph{r2 - Correlation between \emph{y} and the predicted values (if "regression")}}}}
+#'  \item{\emph{r2} - Correlation between \emph{y} and the predicted values (if "regression")}}}
 #' @seealso \code{\link{splitSamples}} \code{\link{ccLabel}}
 #' @examples \dontrun{
 #' 

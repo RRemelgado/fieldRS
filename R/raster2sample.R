@@ -6,12 +6,17 @@
 #' @param min.cover Minimum percent a pixel should be covered by a polygon for sampling (1-100). Default is 1.
 #' @importFrom raster raster extent crop rasterToPoints rasterize xyFromCell cellFromXY crs
 #' @importFrom sp SpatialPointsDataFrame
-#' @seealso \code{\link{dataQuery}} \code{\link{imgInt}}
 #' @return A \emph{SpatialPointsDataFrame} with sampled pixels reporting on pixel compactness.
 #' @details {\emph{poly2Sample} extends on the \code{\link[raster]{RasterToPoint}} function from the raster package. For 
 #' each non-NA pixel in \emph{x}, the function will use 3x3 moving window and report on the frequency of non-NA pixels. 
 #' This can be useful to identify "pure" samples within a clump of pixels (i.e. high frequency) as well as mixed pixels 
-#' along their borders (i.e. low frequency).}
+#' along their borders (i.e. low frequency). The output is a \emph{SpatialPointsDataFrame} reporting on:
+#' \itemize{
+#'  \item{\emph{x} - x coordinate.}
+#'  \item{\emph{y} - y coordinate.}
+#'  \item{\emph{cover} - Non-NA value frequency.}
+#'  \item{\emph{id} - Corresponding raster value in \emph{x}.}}}
+#' @seealso [rsMove:poly2sample()] \code{\link{ccLabel}}
 #' @examples {
 #'
 #'  require(raster)
@@ -42,14 +47,14 @@ raster2sample <- function(x) {
 # 2. evaluate pixel compactness
 #-------------------------------------------------------------------------------------------------------------------------#
   
-  px.freq <- focal(x, matrix(1,3,3), function(i) {ifelse(is.na(i), NA, sum(!is.na(i)) / length(i))})
+  px.freq <- focal(x, matrix(1,3,3), function(i) {sum(!is.na(i)) / length(i)})
   
 #-------------------------------------------------------------------------------------------------------------------------#
 # 3. derive samples
 #-------------------------------------------------------------------------------------------------------------------------#
   
-  odf <- as.data.frame(rasterToPoints(px.freq))
-  colnames(odf) <- c('x', 'x', 'cover')
+  oxy <- xyFromCell(px.freq, which.max(!is.na(x)))
+  oxy <- data.frame(x=oxy[,1], y=oxy[,2], cover=extract(px.freq, oxy), id=extract(x, oxy))
   
 #-------------------------------------------------------------------------------------------------------------------------#
 # 4. build shapefile

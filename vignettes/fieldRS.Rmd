@@ -133,7 +133,7 @@ Once we identifiy target sampling sites we can `fieldRS` to select concrete poly
 ``` {r message=FALSE}
 ndvi.max <- calc(ndvi.ts, max, na.rm=TRUE) # derive maximum NDVI composite)
 seg.img <- ccLabel(ndvi.max, method="spatial", change.threshold=5)$regions # segment NDVI image
-ploplot(seg.img)
+plot(seg.img)
 ```
 
 <p align="justify" style="line-height:200%;">
@@ -150,7 +150,11 @@ Finally, we will use `extractFields()` to derive polygons for each segment. This
 
 ``` {r message=FALSE}
 fields <- extractFields(seg.img)
-plot(fields, col="red", add=TRUE)
+```
+
+``` {r echo=FALSE}
+plot(seg.img)
+plot(fields, border="red", add=TRUE)
 ```
 
 </br>
@@ -168,18 +172,62 @@ unique.crop$labels # show unique labels
 ```
 
 <p align="justify" style="line-height:200%;">
-The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspealings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared agains the unique labels reported by the function.
+The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspealings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared agains the unique labels reported by the function. This way, the slot `labels` will provide the corrected labels instead of the unique values. We can assign this output to the `fieldData`. Additionally, it will offer us a statistical account of the samples as done before based on the new classes.
 </p>
 
-``` {r}
-labelCheck(fieldData$crop, unique.crop$unique.labels, c("not-wheat", "not-wheat", "wheat"))
+``` {r message=FALSE}
+corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
+fieldData$crop_2 <- corrected.labels$labels
 ```
 
+``` {r echo=FALSE}
+kable_styling(kable(head(corrected.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
+plot(corrected.crop$label.count.plot) # show label frequency plot
+```
 
 </br>
 
-### 
+### Translating field data to samples
 <p align="justify" style="line-height:200%;">
-
+After collecting field data we need to translate it into usable samples. `fieldRS` offers tools to extract the pixels overlapping with the ground-truth data and evaluate their consistency. For example, if we are dealing with vectorized polygons, the pixels located along the borders of the polygons can be misleading. For example, if we are dealing with crop mapping, the spectral signature of border pixels can protrait neighboring fields with different crop types. To aid on the selection of usable pixels we can use `poly2sample()`. For each polygon, the function will identify the overlapping pixels and, for each pixel, will quantify the percentage of its area that is overlapping with the polygon. Using this information, the user can easily ignore mixed pixels. In this example, we will prompt the function to filter out all the pixels with a percent cover lower than 50%.  
 </p>
 
+```{r eval=FALSE}
+samples1 <- poly2sample(fieldData, seg.img, min.cover=50)
+```
+
+```{r echo=FALSE, message=FALSE}
+r <- rasterize(fieldData, seg.img)
+samples1$id <- extract(r, samples1)
+samples1 <- samples1[!is.na(samples1$id),]
+rm(r)
+```
+
+
+```{r echo=FALSE}
+ggplot(samples1@data, aes(x=x, y=y, color=cover)) + geom_point()
+```
+
+<p align="justify" style="line-height:200%;">
+As an alternative, we might choose to label pixel clumps directly. In this case, we can use `raster2sample()`. This function is considerably faster than `poly2sample()`. For each pixel, it applies a 3x3 moving window to quantify the number of non-NA pixels. This can be useful to identify pure samples (i.e. pixels with values close to 1) as well as exclude samples that are likely related to mixed pixels (i.e. pixels with values close to 0).</p>
+
+```{r message=FALSE}
+samples2 <- raster2sample(seg.img)
+```
+
+```{r message=FALSE}
+ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
+```
+
+</br>
+
+### Finding sampling mistakes through machine-learning
+<p align="justify" style="line-height:200%;">
+Before we derive a classified map it can be useful to first visualize the performance of a predictive model using our training data. This can be useful to evaluate the need for more samples. But it also tells us something about the quality of our samples. Knowing which samples were not successfully predicted can point us in the direction of polygons that were poorly drawn or labeled. To address this need, we can use `classModel()`. This function provides a wraper for the `train()` function of the `caret` package. Just as in `train()`, our function requires a `data.frame` with training data and a `numeric vector` with the target categorical/continuous variable. In additon, `classMove()` allows us to provide vector that groups the samples. This can be the unique indentifier of each polygon that is associated to each sample as returned by `poly2sample()` and `raster2sample()`. Let's consider the output of the first. We will use `classModel()` with `Random Forest`classifier to classify the crop types in `fieldData` relabeled in a previous step (i.e. "wheat" and "no-wheat"). As predictors, we will use `ndvi.ts`.
+</p>
+
+```{r message=FALSE}
+predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
+crop.types <- fieldData$crop_2[samples1$id] # crop type vector
+predictive.model <- classModel(as.data.frame(predictor.df), crop.types, samples1$id)
+```

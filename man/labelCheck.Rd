@@ -4,14 +4,14 @@
 \alias{labelCheck}
 \title{labelCheck}
 \usage{
-labelCheck(original.labels, unique.original.labels, unique.corrected.labels)
+labelCheck(x, y, z)
 }
 \arguments{
-\item{original.labels}{Vector of class \emph{character}.}
+\item{x}{Vector of class \emph{character}.}
 
-\item{unique.original.labels}{Vector of class \emph{character}.}
+\item{y}{Vector of class \emph{character}.}
 
-\item{unique.corrected.labels}{Vector of class \emph{character}.}
+\item{z}{Vector of class \emph{character}.}
 }
 \value{
 A \emph{character} vector.
@@ -20,14 +20,14 @@ A \emph{character} vector.
 helps fix spelling mistakes in the labels of a set of samples.
 }
 \details{
-{If \emph{unique.original.labels} and \emph{unique.corrected.labels} are missing, the function will return the unique values among
-all the elements of \emph{unique.original.labels}. Otherwise, the function will provide a corrected copy of \emph{unique.original.labels}.
+{If \emph{y} and \emph{z} are missing, the function will return the unique values among
+all the elements of \emph{y}. Otherwise, the function will provide a corrected copy of \emph{y}.
 Aditionally, the function will count the number of records for each of the unique labels from which a plot will be built. The final output
 consists of:
 \itemize{
  \item{\emph{unique.labels} - Unique labels in the output.}
- \item{\emph{corrected.labels} - Corrected labels in \emph{original.labels}.}
- \item{\emph{label.count} - Count of occurrences in \emph{unique.labels} per each element in \emph{original.labels}.}
+ \item{\emph{corrected.labels} - Corrected labels in \emph{x}.}
+ \item{\emph{label.count} - Count of occurrences in \emph{unique.labels} per each element in \emph{x}.}
   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
 }
 }

@@ -7,10 +7,11 @@
 #' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
 #' @importFrom grDevices chull
 #' @importFrom spatialEco polyPerimeter
-#' @details {Given a segmented image as \emph{x}, the function extracts patches of pixels with equal value. For each pixel region,
-#' the function extracts the center pixel coordinates and derives their minimum convex polygon. Then, for each polygon, the derives
-#' a ratio between the area of the polygon and the area of the pixel region. Ratios below zero suggest that the region has a clearly
-#' defined shape (e.g. rectangular). The output of the function is a \emph{SpatialPolygonsDataFrame} reporting on:
+#' @details {Given a segmented image as \emph{x}, the function extracts patches of pixels with equal value. For each 
+#' pixel region, the function extracts the center pixel coordinates and derives their minimum convex polygon. Then, 
+#' for each polygon, the derives a ratio between the area of the polygon and the area of the pixel region. Ratios 
+#' below zero suggest that the region has a clearly defined shape (e.g. rectangular). Clumps is less than 3 points 
+#' are ignored. The output of the function is a \emph{SpatialPolygonsDataFrame} reporting on:
 #' \itemize{
 #'  \item{\emph{Region ID} - Unique polygon identifier.}
 #'  \item{\emph{Area} - Polygon Area (in square meters).}
@@ -64,7 +65,8 @@ extractFields <- function(x) {
     if (length(ic) > 2) {return(Polygons(list(Polygon(xy[c(ic,ic[1]),])), ID=u))} else {return(NULL)}})
 
   # remove unused entries and build SpatialPolygons
-  uv <- uv[sapply(pc, function(x) {!is.null(x)})]
+  i <- sapply(pc, function(x) {!is.null(x)})
+  uv <- uv[i]
   shp <- SpatialPolygons(pc[i], proj4string=crs(x))
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
