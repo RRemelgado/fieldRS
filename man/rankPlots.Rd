@@ -16,7 +16,7 @@ rankPlots(x, y, z, min.size = 1, priority = c("class_count", "patch_count",
 
 \item{min.size}{Numeric element.}
 
-\item{priority}{Character vector containing one or more of 'count', 'patch'and 'roads'.}
+\item{priority}{Character vector.}
 }
 \value{
 A list.
@@ -27,19 +27,19 @@ helps fix spelling mistakes in the labels of a set of samples.
 \details{
 {For each polygon in \emph{y}, the function will determine the distance between its centroid and
 the nearest road provided through \emph{z}, count the number of classes in \emph{x} and the number of patches
-of connectec pixels and report on the proportion of non NA values. The patch count can be restricted to those
+of connected pixels and report on the proportion of non NA values. The patch count can be restricted to those
 with a size greater \emph{min.size} which specifies the minimum number of pixels per patch. Then, the function
-will use this data to rank the elements of \emph{y} according to the order of the keyords in \emph{priority}.
+will use this data to rank the elements of \emph{y} according to the order of the keywords in \emph{priority}.
 The user can choose one or more of the following keywords:
  \itemize{
  \item{\emph{class_count} - Priority given to the highest class count.}
- \item{\emph{pixel_frequency} - Priority given to the higuest non-NA pixel count.}
- \item{\emph{patch_count} - Priority given to the higuest patch count.}
+ \item{\emph{pixel_frequency} - Priority given to the highest non-NA pixel count.}
+ \item{\emph{patch_count} - Priority given to the highest patch count.}
  \item{\emph{road_distance} - Priority given to shortest distance.}}
 The final output is a \emph{data.frame} reporting on:
  \itemize{
- \item{\emph{x} - Polygon centrod x coordinate.}
- \item{\emph{y} - Polygon centrod y coordinate.}
+ \item{\emph{x} - Polygon centroid x coordinate.}
+ \item{\emph{y} - Polygon centroid y coordinate.}
  \item{\emph{mape} - Mean Absolute Percent Error.}
  \item{\emph{count} - Number of pixel regions.}
  \item{\emph{frequency} - Number of non-NA pixels.}

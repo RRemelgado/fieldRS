@@ -13,7 +13,7 @@ extractFields(x)
 A \emph{SpatialPolygonsDataFrame}.
 }
 \description{
-Extracts and vectorizes patches of equal value within a raster object.
+Extracts and vectorizes clumps of pixels with equal value within a raster object.
 }
 \details{
 {Given a segmented image as \emph{x}, the function extracts patches of pixels with equal value. For each 

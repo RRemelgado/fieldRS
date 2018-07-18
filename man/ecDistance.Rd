@@ -13,10 +13,10 @@ ecDistance(x)
 A \emph{matrix}.
 }
 \description{
-Calculates the ecludian distance among all elements of a SpatialPoints object.
+Calculates the Euclidean distance among all elements of a SpatialPoints object.
 }
 \details{
-{compares all elements of \emph{x} and returns the minimum ecludian distance between them.}
+{compares all elements of \emph{x} and returns the minimum Euclidean distance between them.}
 }
 \examples{
 {

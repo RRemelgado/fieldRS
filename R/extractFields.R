@@ -1,6 +1,6 @@
 #' @title extractFields
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
-#' @description Extracts and vectorizes patches of equal value within a raster object.
+#' @description Extracts and vectorizes clumps of pixels with equal value within a raster object.
 #' @param x Object of class \emph{RasterLayer}.
 #' @return A \emph{SpatialPolygonsDataFrame}.
 #' @importFrom raster rasterToPoints res crs cellStats area crop

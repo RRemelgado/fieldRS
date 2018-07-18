@@ -7,7 +7,7 @@
 #' @importFrom ggplot2 aes_string geom_bar theme_bw theme xlab ylab element_text
 #' @details {If \emph{y} and \emph{z} are missing, the function will return the unique values among
 #' all the elements of \emph{y}. Otherwise, the function will provide a corrected copy of \emph{y}.
-#' Aditionally, the function will count the number of records for each of the unique labels from which a plot will be built. The final output
+#' Additionally, the function will count the number of records for each of the unique labels from which a plot will be built. The final output
 #' consists of:
 #' \itemize{
 #'  \item{\emph{unique.labels} - Unique labels in the output.}

@@ -16,7 +16,7 @@
 #' iterates through all samples making sure that all contribute for the final accuracy. To specify how the samples should be split, the user
 #' should provide the sample-wise identifiers through \emph{z}. For each unique value in \emph{z}, the function keeps it for validation and
 #' the remaining samples for training. This process is repeated for all sample groups and a final accuracy is estimated from the overall set
-#' of results. If \emph{mode} is "classification", the function will estimate the overall acurracy for each unique valie in \emph{y}. If
+#' of results. If \emph{mode} is "classification", the function will estimate the overall accuracy for each unique value in \emph{y}. If
 #' "regression" is set, the output will be an the coefficient of determination. The classification algorithm can be set with \emph{method}
 #' which passes the argument to \link[caret]{train}. Apart from the accuracy assessment, the function stores the performance for each sample.
 #' If \emph{mode} is "classification", the function will return a logical vector reporting on the correctly assigned classes. If \emph{mode}

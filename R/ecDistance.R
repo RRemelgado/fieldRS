@@ -1,8 +1,8 @@
 #' @title ecDistance
-#' @description Calculates the ecludian distance among all elements of a SpatialPoints object.
+#' @description Calculates the Euclidean distance among all elements of a SpatialPoints object.
 #' @param x A \emph{matrix}, \emph{data.frame} or a \emph{SpatialPoints} object.
 #' @return A \emph{matrix}.
-#' @details {compares all elements of \emph{x} and returns the minimum ecludian distance between them.}
+#' @details {compares all elements of \emph{x} and returns the minimum Euclidean distance between them.}
 #' @importFrom rgeos gDistance
 #' @seealso \code{\link{spCentroid}}
 #' @examples {

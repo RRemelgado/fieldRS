@@ -17,11 +17,11 @@ ccLabel(x, method = "simple", change.threshold = NULL)
 A list.
 }
 \description{
-Labels groups of pixels in a raster object that share similar atributes.
+Labels groups of pixels in a raster object that share similar attributes.
 }
 \details{
-{Uses a 8-neighbor connected compoent labelling algorithm (determined by \emph{method}) to identify groups of pixels of the same
-value. Each group receives a distinct numeric label. The function provides two connected component labeling alogorithms:
+{Uses a 8-neighbor connected component labeling algorithm (determined by \emph{method}) to identify groups of pixels of the same
+value. Each group receives a distinct numeric label. The function provides two connected component labeling algorithms:
 \itemize{
  \item{\emph{simple} - Connects neighboring pixels with the same value. Suitable for categorical data.}
  \item{\emph{spatial} - Estimates the MAPE using a 3x3 moving window distinguishes neighboring pixels 

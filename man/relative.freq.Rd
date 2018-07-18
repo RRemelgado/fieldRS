@@ -15,7 +15,7 @@ relative.freq(x, na.rm = TRUE)
 A \emph{numeric} element or an object of class \emph{RasterLayer}.
 }
 \description{
-Estimate the relative frequency of non-na pixels.
+Estimate the relative frequency of non-NA pixels.
 }
 \details{
 {Estimates the relative frequency of non-NA values.}

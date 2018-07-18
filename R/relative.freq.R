@@ -1,6 +1,6 @@
 #' @title relative.freq
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
-#' @description Estimate the relative frequency of non-na pixels.
+#' @description Estimate the relative frequency of non-NA pixels.
 #' @param x A vector of class \emph{numeric} or an object of class \emph{rasterLayer}.
 #' @param na.rm Logical. Should the NA values be excluded. Default is TRUE.
 #' @return A \emph{numeric} element or an object of class \emph{RasterLayer}.
