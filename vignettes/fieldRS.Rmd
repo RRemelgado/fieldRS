@@ -31,7 +31,7 @@ library(rsMove)
 
 ### Why develop fieldRS?
 <p align="justify" style="line-height:200%;">
-`fieldRS`^[`fieldRS` was developed as part of the project Research Network Water in Central Asia (CAWa) funded by the German Federal Foreign Office. It is part of the German Water Initiative for Central Asia (the so-called “Berlin process”), which the German Federal Foreign Office launched on 1 April 2008 in order to support peaceful, sustainable and mutually beneficial management of transboundary water resources in Central Asia.] was designed to ease the collection and management of ground truth data. It provides tools that help select sampling site, correct and pre-process training data and preview classification results.
+`fieldRS`^[`fieldRS` was developed at the University of Würzburg, Germany, as part of the project Research Network Water in Central Asia (<a href="http://www.cawa-project.net/">CAWa</a>) funded by the German Federal Foreign Office. It is part of the German Water Initiative for Central Asia (the so-called “Berlin process”), which the German Federal Foreign Office launched on 1 April 2008 in order to support peaceful, sustainable and mutually beneficial management of transboundary water resources in Central Asia.] was designed to ease the collection and management of ground truth data. It provides tools that help select sampling site, correct and pre-process training data and preview classification results.
 </p>
 
 </br>
@@ -66,7 +66,7 @@ ndvi.ts <- brick(system.file("extdata", "ndvi.tif", package="fieldRS")) # NDVI r
 When aiming for tasks such as land cover classification we try to sample from as many classes as possible in order to build a representative map. However, this is often made difficult by the lack of knowledge of the target area. When selecting sampling sites randomly, this lack of knowledge can lead us to visit homogeneous places that provide us with little information on the composition of the area we wish to classify. To help better select sampling sites we developed `rankPlots()`. This function uses raster and vector information to prioritize sampling sites based on certain, predefined criteria. As a basis, the function requires a equidistant grid that will define the potential sampling plots. To build this grid we can use the function `derivePlots()`. This function requires an object from which a spatial extent can be derived (e.g. *RasterLayer*, *SpatialPolygonsDataFrame*). Then, based on that extent, the function build a grid of square polygons where its size is predefined by the user. In this example, we will build a grid with 1x1 km polygons. Looking at the output - shown below - we can see that the borders or the image are not considered. This is because those areas result in sampling plots smaller that the target 1x1 km size.
 </p>
 
-``` {r  message=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 plot.grid <- derivePlots(fieldData, 1000)
 plot(ndvi.ts[[1]]) # plot 1st NDVI image
 plot(plot.grid, add=TRUE) # overlap sampling plot grid
@@ -78,6 +78,9 @@ Additionally, `rankPlots()` requires raster information that provides an indicat
 
 ``` {r message=FALSE}
 k.img <- unsuperClass(ndvi.ts, nSamples=5000, nClasses=5)$map
+```
+
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 plot(k.img)
 ```
 
@@ -100,7 +103,7 @@ Now that we collected all the reference data, we can use `rankPlots()` to identi
 While the function offers a set of predefined sorting criteria, the user can re-arrange them. Let's show this in action through two test cases. In our first example, we will give priority to the class and patch count. In other words, we will priority the analysis of the unsupervised classification output. In our second example, we will prioritize the distance to the roads. The output will be added to the `plot.grid` shapefile we previously created.
 </p>
 
-``` {r message=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 # example 1
 plot.grid_1 <- plot.grid
 plot.grid_1@data <- rankPlots(k.img, plot.grid, roads, priority=c('class_count', 'patch_count', 'road_distance'))
@@ -134,6 +137,9 @@ Once we identify target sampling sites we can `fieldRS` to select concrete polyg
 ``` {r message=FALSE}
 ndvi.max <- calc(ndvi.ts, max, na.rm=TRUE) # derive maximum NDVI composite)
 seg.img <- ccLabel(ndvi.max, method="spatial", change.threshold=5)$regions # segment NDVI image
+```
+
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 plot(seg.img)
 ```
 
@@ -153,9 +159,8 @@ Finally, we will use `extractFields()` to derive polygons for each segment. This
 fields <- extractFields(seg.img)
 ```
 
-``` {r echo=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 plot(seg.img)
-plot(fields, border="red", add=TRUE)
 ```
 
 </br>
@@ -167,9 +172,12 @@ Once we collect our field data we will often notice some inconsistencies. This i
 
 ``` {r}
 unique.crop <- labelCheck(fieldData$crop)
+unique.crop$labels # show unique labels
+```
+
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 kable_styling(kable(head(unique.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
 plot(unique.crop$label.count.plot) # show label frequency plot
-unique.crop$labels # show unique labels
 ```
 
 <p align="justify" style="line-height:200%;">
@@ -181,7 +189,7 @@ corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "n
 fieldData$crop_2 <- corrected.labels$labels
 ```
 
-``` {r echo=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 kable_styling(kable(head(corrected.labels$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
 plot(corrected.labels$label.count.plot) # show label frequency plot
 ```
@@ -205,7 +213,7 @@ rm(r)
 ```
 
 
-```{r echo=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 ggplot(samples1@data, aes(x=x, y=y, color=cover)) + geom_point()
 ```
 
@@ -216,7 +224,7 @@ As an alternative, we might choose to label pixel clumps directly. In this case,
 samples2 <- raster2sample(seg.img)
 ```
 
-```{r message=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
 ```
 
@@ -240,7 +248,7 @@ predictive.model <- classModel(as.data.frame(predictor.df), crop.types, ids)
 ### Finding sampling mistakes through machine-learning
 For each class, the function identified the corresponding polygons and iterated through each polygon keeping it for validation while using the remaining ones for training. Then, the function recorded if the class of this polygon was successfully predicted. Finally, for each class, the function derived an aggregated F1-score - based on all true and false positives and negatives - and reported on the accuracy of each polygon. Below we can see the results of this anlysis. polygons colored red in the plot weren't successfully predicted by the classifier.
 
-```{r echo=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 kable_styling(kable(head(predictive.model$overall.validation, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
 fieldData <- fieldData[ids,]
 plot(fieldData)
