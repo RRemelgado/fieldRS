@@ -1,5 +1,5 @@
 </br>
-<a href="http://www.cawa-project.net//"><img width="1000" height="200" src="http://www.cawa-project.net/typo3conf/ext/cawa_website/Resources/Public/Images/cawa_logo.png"></a>
+<a href="http://www.cawa-project.net//"><img width="1000" height="50" src="http://www.cawa-project.net/typo3conf/ext/cawa_website/Resources/Public/Images/cawa_logo.png"></a>
 </br>
 
 fieldRS
