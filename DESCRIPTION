@@ -1,13 +1,13 @@
 Package: fieldRS
 Type: Package
-Title: Remote sensing field work
-Version: 0.0.0.9000
+Title: Remote Sensing Field Work Tools
+Version: 0.1.0
 Date: 2018-07-18
 Authors@R: person("Ruben", "Remelgado", role = c("aut", "cre"), email="ruben.remelgado@uni-wuerzburg.de")
 URL: https://github.com/RRemelgado/fieldRS/
 BugReports: https://github.com/RRemelgado/fieldRS/issues/
 Maintainer: Ruben Remelgado <ruben.remelgado@uni-wuerzburg.de>
-Description: Tools to support Remote Sensing oriented field work.
+Description: Spatial analysis tools to guide Remote Sensing oriented field work. fieldRS supports scientists and practitioners in the design of field campaigns through the raking of priority sampling sites, the extraction of potential samples based on multi-temporal, spatial datasets and the conversion of ground-truth data into usable pixels that can be used for e.g. perform a land cover classification.
 LazyData: TRUE
 Imports: raster, sp, caret, rgdal, ggplot2, grDevices, rsMove, spatialEco, rgeos, RStoolbox
 RoxygenNote: 6.0.1

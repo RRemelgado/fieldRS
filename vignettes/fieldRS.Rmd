@@ -31,7 +31,7 @@ library(rsMove)
 
 ### Why develop fieldRS?
 <p align="justify" style="line-height:200%;">
-`fieldRS`^[`fieldRS` was developed at the University of Würzburg, Germany, as part of the project Research Network Water in Central Asia (<a href="http://www.cawa-project.net/">CAWa</a>) funded by the German Federal Foreign Office. It is part of the German Water Initiative for Central Asia (the so-called “Berlin process”), which the German Federal Foreign Office launched on 1 April 2008 in order to support peaceful, sustainable and mutually beneficial management of transboundary water resources in Central Asia.] was designed to ease the collection and management of ground truth data. It provides tools that help select sampling site, correct and pre-process training data and preview classification results.
+`fieldRS`^[`fieldRS` was developed at the University of Würzburg, Germany, as part of the project Research Network Water in Central Asia (<a href="http://www.cawa-project.net/">CAWa</a>) funded by the German Federal Foreign Office. It is part of the German Water Initiative for Central Asia (the so-called “Berlin process”), which the German Federal Foreign Office launched on 1 April 2008 in order to support peaceful, sustainable and mutually beneficial management of transboundary water resources in Central Asia.] was designed to ease the collection and management of ground truth data. It provides tools that help select sampling sites, correct and pre-process training data and preview classification results.
 </p>
 
 </br>
@@ -147,8 +147,12 @@ plot(seg.img)
 Now we can `erosionFilter()` to remove small clumps that are likely related to mixed-pixels.
 </p>
 
-```{r message=FALSE}
+```{r message=FALSE, eval=FALSE}
 seg.img <- erosionFilter(seg.img)
+```
+
+``` {r echo=FALSE}
+seg.img <- raster(system.file("extdata", "segFilter.tif", package="fieldRS"))
 ```
 
 <p align="justify" style="line-height:200%;">
@@ -161,6 +165,7 @@ fields <- extractFields(seg.img)
 
 ``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 plot(seg.img)
+plot(fields, border="red", add=TRUE)
 ```
 
 </br>
@@ -184,7 +189,7 @@ plot(unique.crop$label.count.plot) # show label frequency plot
 The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspellings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared against the unique labels reported by the function. This way, the slot `labels` will provide the corrected labels instead of the unique values. We can assign this output to the `fieldData`. Additionally, it will offer us a statistical account of the samples as done before based on the new classes.
 </p>
 
-``` {r message=FALSE}
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
 fieldData$crop_2 <- corrected.labels$labels
 ```
@@ -201,8 +206,11 @@ plot(corrected.labels$label.count.plot) # show label frequency plot
 After collecting field data we need to translate it into usable samples. `fieldRS` offers tools to extract the pixels overlapping with the ground-truth data and evaluate their consistency. For example, if we are dealing with vectorized polygons, the pixels located along the borders of the polygons can be misleading. For example, if we are dealing with crop mapping, the spectral signature of border pixels can portrait neighbouring fields with different crop types. To aid on the selection of usable pixels we can use `poly2sample()`. For each polygon, the function will identify the overlapping pixels and, for each pixel, will quantify the percentage of its area that is overlapping with the polygon. Using this information, the user can easily ignore mixed pixels. In this example, we will prompt the function to filter out all the pixels with a percent cover lower than 50%.  
 </p>
 
-```{r message=FALSE}
+```{r message=FALSE, eval=FALSE}
 samples1 <- poly2sample(fieldData, seg.img, min.cover=50)
+```
+```{r echo=FALSE}
+data(samples1)
 ```
 
 ```{r echo=FALSE, message=FALSE}
@@ -211,7 +219,6 @@ samples1$id <- extract(r, samples1)
 samples1 <- samples1[!is.na(samples1$id),]
 rm(r)
 ```
-
 
 ``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 ggplot(samples1@data, aes(x=x, y=y, color=cover)) + geom_point()
@@ -235,7 +242,7 @@ ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
 Before we derive a classified map it can be useful to first visualize the performance of a predictive model using our training data. This can be useful to evaluate the need for more samples. But it also tells us something about the quality of our samples. Knowing which samples were not successfully predicted can point us in the direction of polygons that were poorly drawn or labelled. To address this need, we can use `classModel()`. This function provides a wrapper for the `train()` function of the `caret` package. Just as in `train()`, our function requires a `data.frame` with training data and a `numeric vector` with the target categorical/continuous variable. In addition, `classMove()` allows us to provide vector that groups the samples. This can be the unique identifier of each polygon that is associated to each sample as returned by `poly2sample()` and `raster2sample()`. Let's consider the output of the first. We will use `classModel()` with `Random Forest`classifier to classify the crop types in `fieldData` relabelled in a previous step (i.e. "wheat" and "no-wheat"). As predictors, we will use `ndvi.ts`. Given that this operation can be time consuming for a large amount of samples, we will average the samples for each polygon across each layer in `ndvi.ts` using `apply()`.
 </p>
 
-```{r message=FALSE}
+```{r eval=FALSE}
 predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
 ids <- unique(samples1$id) # polygon id's
 predictor.df <- do.call(rbind, lapply(ids, function(u) {
@@ -245,12 +252,26 @@ crop.types <- fieldData$crop_2[ids] # crop type vector
 predictive.model <- classModel(as.data.frame(predictor.df), crop.types, ids)
 ```
 
+```{r, echo=FALSE}
+predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
+ids <- unique(samples1$id) # polygon id's
+predictor.df <- do.call(rbind, lapply(ids, function(u) {
+  i <- which(samples1$id == u)
+  return(as.vector(apply(predictor.df[i,], 2, mean, na.rm=TRUE)))})) # summarize on field level
+crop.types <- fieldData$crop_2[ids] # crop type vector
+data(predictive.model1)
+data(predictive.model2)
+
+```
+
 ### Finding sampling mistakes through machine-learning
+<p align="justify" style="line-height:200%;">
 For each class, the function identified the corresponding polygons and iterated through each polygon keeping it for validation while using the remaining ones for training. Then, the function recorded if the class of this polygon was successfully predicted. Finally, for each class, the function derived an aggregated F1-score - based on all true and false positives and negatives - and reported on the accuracy of each polygon. Below we can see the results of this anlysis. polygons colored red in the plot weren't successfully predicted by the classifier.
+</p>
 
 ``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-kable_styling(kable(head(predictive.model$overall.validation, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
+kable_styling(kable(head(predictive.model2, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
 fieldData <- fieldData[ids,]
 plot(fieldData)
-plot(fieldData[!predictive.model$sample.validation,], col="red", add=TRUE)
+plot(fieldData[!predictive.model1,], col="red", add=TRUE)
 ```

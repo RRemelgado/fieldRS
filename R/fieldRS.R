@@ -1,6 +1,6 @@
 #' fieldRS.
 #'
-#' @name rsMove
+#' @name fieldRS
 #' @docType package
 #' @import raster sp
 NULL
@@ -42,4 +42,37 @@ NULL
 #' @name roads
 #' @usage data(roads)
 #' @format A SpatialLinesDataFrame
+NULL
+
+#' Pixel sample shapefile.
+#'
+#' Samples derived from the fieldData dataset with poly2sample().
+#'
+#' @docType data
+#' @keywords datasets
+#' @name samples1
+#' @usage data(samples1)
+#' @format A SpatialLinesDataFrame
+NULL
+
+#' Predictive classification model accuracy (class-wise)
+#'
+#' Sample-wise validation returned by classModel().
+#'
+#' @docType data
+#' @keywords datasets
+#' @name predictive.model1
+#' @usage data(predictive.model1)
+#' @format A logical vector.
+NULL
+
+#' Predictive classification model accuracy (overall)
+#'
+#' Class-wise F1-score returned by classModel().
+#'
+#' @docType data
+#' @keywords datasets
+#' @name predictive.model2
+#' @usage data(predictive.model2)
+#' @format A data.frame
 NULL
