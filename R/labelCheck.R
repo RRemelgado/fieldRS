@@ -57,7 +57,7 @@ labelCheck <- function(x, y, z) {
   # 3. count unique values
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   
-  count <- data.frame(count=sapply(s.labels, function(l) {sum(x==l, na.rm=TRUE)}), label=s.labels)
+  count <- data.frame(count=sapply(unique(s.labels), function(l) {sum(x==l, na.rm=TRUE)}), label=unique(s.labels))
   
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   # 4. derive plot with unique labels per
