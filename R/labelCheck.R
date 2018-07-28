@@ -48,10 +48,10 @@ labelCheck <- function(x, y, z) {
   
   # correction needed (update original labels with corrected values)
   if (correct) {
+    s.labels <- x
     for (l in 1:length(y)) {
       i <- which(x == y[l])
-      if (length(i) > 0) {x[i] <- z[l]}}
-    s.labels <- x}
+      if (length(i) > 0) {s.labels[i] <- z[l]}}}
   
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   # 3. count unique values
