@@ -7,7 +7,7 @@ Authors@R: person("Ruben", "Remelgado", role = c("aut", "cre"), email="ruben.rem
 URL: https://github.com/RRemelgado/fieldRS/
 BugReports: https://github.com/RRemelgado/fieldRS/issues/
 Maintainer: Ruben Remelgado <ruben.remelgado@uni-wuerzburg.de>
-Description: Spatial analysis tools to guide Remote Sensing oriented field work. fieldRS supports scientists and practitioners in the design of field campaigns through the raking of priority sampling sites, the extraction of potential samples based on multi-temporal, spatial datasets and the conversion of ground-truth data into usable pixels that can be used for e.g. perform a land cover classification.
+Description: In Remote Sensing, designing a field campaign to collect ground-truth data can be a challenging task. We need to assure the collection of representative samples while accounting for issues such as budget constraints and limited accessibility created by e.g. poor infrastructure. As suggested by Olofsson et al. (2014) <doi:10.1016/j.rse.2014.02.015>, this demands the establishment of best-practices to collect ground-truth data that avoid a waste of time and funds. 'fieldRS' addresses this issue by helping scientists and practitioners design field campaigns through the identification of priority sampling sites, the extraction of potential sampling plots and the conversion of ground-truth data into samples that can be used in tasks such as e.g. land cover classification.
 LazyData: TRUE
 Imports: raster, sp, caret, rgdal, ggplot2, grDevices, rsMove, spatialEco, rgeos, RStoolbox
 RoxygenNote: 6.0.1
