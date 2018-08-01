@@ -6,7 +6,7 @@
 #' @importFrom raster raster res crs
 #' @details {For each unique, non-NA value in \emph{x} the function derives a mask, 
 #' erodes it and dilates it simplifying the shape of the corresponding pixels.}
-#' @examples \dontrun{
+#' @examples {
 #' 
 #' require(raster)
 #' 
@@ -14,7 +14,7 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # spatial change labeling
-#' or <- ccLabel(r[[1]], method="spatial", change.threshold=10)$regions
+#' or <- ccLabel(r[[1]], method="spatial", change.threshold=50)$regions
 #' 
 #' # convert to polygons and plot
 #' er <- erosionFilter(or)
