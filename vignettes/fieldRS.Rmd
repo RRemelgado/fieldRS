@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r echo=FALSE, message=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # load packages
 library(fieldRS)
 library(raster)
