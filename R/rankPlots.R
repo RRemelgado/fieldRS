@@ -86,7 +86,7 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
   if (checkOverlap(x, y)[2]!=100) {stop('"y" is not contained by "x"')}
 
   # roads
-  if (missing("z")) {
+  if (exists("z")) {
     if (!class(z)[1] %in% c('SpatialLines', 'SpatialLinesDataFrame')) {stop('"roads" is not of a valid class')}
     if (checkOverlap(z, y)[1] == 0) {warning('"z" is not contained by "x"')}
     reportDistance <- TRUE
