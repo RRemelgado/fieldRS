@@ -115,14 +115,11 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
     pf <- relative.freq(r[i])
     r <- crop(regions, y[j,])
     pc <- sum(freq(r)[,2] >= min.size)
+    d <- spCentroid(y[j,])@coords
     if (reportDistance) {
-      d <- spCentroid(y[j,])@coords
       dr <- SpatialPoints(cbind(d[1], d[2]), proj4string=crs(z))
       dr <- min(gDistance(dr, z, byid=TRUE))
-    } else {
-      xc <- NA
-      yc <- NA
-      dr <- NA}
+    } else {dr <- NA}
     return(data.frame(x=d[1], y=d[2], c1=cc, pc=pc, frequency=pf, distance=dr))}))
 
   colnames(df.original) <- c('x', 'y', 'class_count', 'patch_count', 'pixel_frequency', 'road_distance')
