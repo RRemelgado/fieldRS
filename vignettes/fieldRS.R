@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----echo=FALSE, message=FALSE-------------------------------------------
+## ----echo=FALSE, message=FALSE, warning=FALSE----------------------------
 # load packages
 library(fieldRS)
 library(raster)
@@ -12,7 +12,6 @@ library(ggplot2)
 library(knitr)
 library(kableExtra)
 library(RStoolbox)
-library(rsMove)
 
 ## ----message=FALSE-------------------------------------------------------
 data(fieldData) # ground truth data

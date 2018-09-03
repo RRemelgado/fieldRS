@@ -4,8 +4,8 @@
 \alias{rankPlots}
 \title{rankPlots}
 \usage{
-rankPlots(x, y, z, min.size = 1, priority = c("class_count", "patch_count",
-  "pixel_frequency", "road_distance"))
+rankPlots(x, y, z, min.size = 1, priority = c("class_count",
+  "patch_count", "pixel_frequency", "road_distance"))
 }
 \arguments{
 \item{x}{Object of class \emph{RasterLayer}, \emph{RasterStack} or \emph{RasterBrick}.}
