@@ -4,7 +4,7 @@
 \alias{classModel}
 \title{classModel}
 \usage{
-classModel(x, y, z, mode = "classification", method = "rf")
+classModel(x, y, z, mode = "classification", method = "rf", ...)
 }
 \arguments{
 \item{x}{Object of class \emph{data.frame}.}
@@ -16,6 +16,8 @@ classModel(x, y, z, mode = "classification", method = "rf")
 \item{mode}{One of "classification" or "regression".}
 
 \item{method}{Classification algorithm. See options provided through \link[caret]{train}.}
+
+\item{...}{Additional arguments passed to \link[caret]{train}.}
 }
 \value{
 A two element numeric \emph{vector}.
@@ -50,16 +52,16 @@ r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
 # read field data
 data(fieldData)
-fieldData <- fieldData[c(1:3,7),]
+fieldData <- fieldData[c(1:10),]
 
 # extract values for polygon centroid
 c <- spCentroid(fieldData)
 ev <- as.data.frame(extract(r, c))
 
-classModel(ev, fieldData$crop, as.character(1:length(fieldData)))
+cm <- classModel(ev, fieldData$crop, as.character(1:length(fieldData)))
 
 }
 }
 \seealso{
-\code{\link{raster2sample}} \link[rsMove]{poly2sample} \code{\link{ccLabel}}
+\code{\link{raster2sample}} \code{\link{poly2sample}} \code{\link{ccLabel}}
 }

@@ -6,6 +6,7 @@
 #' @param z A vector.
 #' @param mode One of "classification" or "regression".
 #' @param method Classification algorithm. See options provided through \link[caret]{train}.
+#' @param ... Additional arguments passed to \link[caret]{train}.
 #' @return A two element numeric \emph{vector}.
 #' @importFrom caret train
 #' @importFrom ggplot2 ggplot aes_string theme_bw ylim
@@ -25,7 +26,7 @@
 #'  \item{\emph{sample.validation} - Accuracy assessment of each sample.}
 #'  \item{\emph{overall.validation} - Finally accuracy value for each class (if "classification").}
 #'  \item{\emph{r2} - Correlation between \emph{y} and the predicted values (if "regression")}}}
-#' @seealso \code{\link{raster2sample}} \link[rsMove]{poly2sample} \code{\link{ccLabel}}
+#' @seealso \code{\link{raster2sample}} \code{\link{poly2sample}} \code{\link{ccLabel}}
 #' @examples {
 #' 
 #' require(raster)
@@ -35,13 +36,13 @@
 #' 
 #' # read field data
 #' data(fieldData)
-#' fieldData <- fieldData[c(1:3,7),]
+#' fieldData <- fieldData[c(1:10),]
 #' 
 #' # extract values for polygon centroid
 #' c <- spCentroid(fieldData)
 #' ev <- as.data.frame(extract(r, c))
 #' 
-#' classModel(ev, fieldData$crop, as.character(1:length(fieldData)))
+#' cm <- classModel(ev, fieldData$crop, as.character(1:length(fieldData)))
 #' 
 #' }
 #' @export
@@ -49,7 +50,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-classModel <- function(x, y, z, mode="classification", method="rf") {
+classModel <- function(x, y, z, mode="classification", method="rf", ...) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. Check input variables
@@ -109,7 +110,7 @@ classModel <- function(x, y, z, mode="classification", method="rf") {
     for (r in 1:length(u)) {
       vi <- which(z == u[r])
       ti <- which(z != u[r])
-      m <- train(x[ti,], y[ti], method=method)
+      m <- train(x[ti,], y[ti], method=method, ...)
       v[vi] <- predict(m, x[vi,], y[vi])}
 
     # derive accuracy

@@ -25,17 +25,16 @@ of \emph{x} and \emph{y} that coincides with their common spatial overlap.}
 {
 
  require(raster)
+ 
+ # build polygons
+ df1 <- data.frame(x=c(1, 5, 10, 2, 1), y=c(10, 9, 8, 7, 10))
+ df2 <- data.frame(x=c(2, 6, 5, 4, 2), y=c(10, 9, 7, 4, 10))
+ p <- list(Polygons(list(Polygon(df1)), ID=1), 
+ Polygons(list(Polygon(df2)), ID=2))
+ p <- SpatialPolygons(p)
 
- # load example probability image
- file <- system.file('extdata', 'probabilities.tif', package="rsMove")
- img <- raster(file)
-
- # load area of interest
- file <- system.file('extdata', 'roi.shp', package="rsMove")
- roi <- shapefile(file)
-
- # extract samples
- checkOverlap(img, roi)
+ # check overlap \%
+ checkOverlap(p[1,], p[2,])
 
 }
 }

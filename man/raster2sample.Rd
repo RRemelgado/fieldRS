@@ -42,5 +42,5 @@ along their borders (i.e. low frequency). The output is a \emph{SpatialPointsDat
 }
 }
 \seealso{
-\link[rsMove]{poly2sample} \code{\link{ccLabel}}
+\code{\link{poly2sample}} \code{\link{ccLabel}}
 }

@@ -5,7 +5,7 @@
 #' @param y A raster object or a numeric element.
 #' @importFrom raster raster extent crop rasterToPoints rasterize xyFromCell cellFromXY crs
 #' @importFrom sp SpatialPointsDataFrame
-#' @seealso \code{\link{dataQuery}} \code{\link{imgInt}}
+#' @seealso \code{\link{raster2sample}} \code{\link{ccLabel}}
 #' @return A \emph{SpatialPointsDataFrame} with sampled pixels reporting on polygon percent coverage.
 #' @details {\emph{poly2Sample} extends on the \code{\link[raster]{rasterize}} function from the raster package making
 #' it more efficient over large areas and converting its output into point samples rather than a raster object. For each

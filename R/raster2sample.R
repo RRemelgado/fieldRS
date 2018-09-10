@@ -14,7 +14,7 @@
 #'  \item{\emph{y} - y coordinate.}
 #'  \item{\emph{cover} - Non-NA value frequency.}
 #'  \item{\emph{id} - Corresponding raster value in \emph{x}.}}}
-#' @seealso \link[rsMove]{poly2sample} \code{\link{ccLabel}}
+#' @seealso \code{\link{poly2sample}} \code{\link{ccLabel}}
 #' @examples {
 #'
 #'  require(raster)

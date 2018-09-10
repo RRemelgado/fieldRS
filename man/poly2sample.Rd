@@ -44,5 +44,5 @@ the extent of \emph{x} and a resolution equal to \emph{y}.}
 }
 }
 \seealso{
-\code{\link{dataQuery}} \code{\link{imgInt}}
+\code{\link{raster2sample}} \code{\link{ccLabel}}
 }
