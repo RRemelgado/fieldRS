@@ -5,7 +5,7 @@
 =================================================================================
 
 ### New
-  * Add function poly2Sample()
+  * Added functions poly2Sample() and checkOverlap()
   
 ### Fixes
   * Update vignette formatting

@@ -9,7 +9,6 @@
 #' @return A two element numeric \emph{vector}.
 #' @importFrom caret train
 #' @importFrom ggplot2 ggplot aes_string theme_bw ylim
-#' @importFrom rsMove checkOverlap
 #' @importFrom stats cor
 #' @details {Uses \link[caret]{train} to derive a predictive model based on \emph{x} - which contains the predictors - and \emph{y} - which
 #' contains information on the target classes (if \emph{mode} is "classification") or values (if \emph{mode} is "regression"). This method
