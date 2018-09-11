@@ -4,20 +4,18 @@
 \alias{classModel}
 \title{classModel}
 \usage{
-classModel(x, y, z, mode = "classification", method = "rf", ...)
+classModel(x, y, z, mode = "classification", ...)
 }
 \arguments{
 \item{x}{Object of class \emph{data.frame}.}
 
-\item{y}{A vector.}
+\item{y}{A vector of class \emph{character} or \emph{numeric}.}
 
-\item{z}{A vector.}
+\item{z}{A vector of class \emph{character} or \emph{numeric}.}
 
 \item{mode}{One of "classification" or "regression".}
 
-\item{method}{Classification algorithm. See options provided through \link[caret]{train}.}
-
-\item{...}{Additional arguments passed to \link[caret]{train}.}
+\item{...}{Arguments passed to \link[caret]{train}.}
 }
 \value{
 A two element numeric \emph{vector}.
@@ -32,8 +30,9 @@ iterates through all samples making sure that all contribute for the final accur
 should provide the sample-wise identifiers through \emph{z}. For each unique value in \emph{z}, the function keeps it for validation and
 the remaining samples for training. This process is repeated for all sample groups and a final accuracy is estimated from the overall set
 of results. If \emph{mode} is "classification", the function will estimate the overall accuracy for each unique value in \emph{y}. If
-"regression" is set, the output will be an the coefficient of determination. The classification algorithm can be set with \emph{method}
-which passes the argument to \link[caret]{train}. Apart from the accuracy assessment, the function stores the performance for each sample.
+"regression" is set, the output will be an the coefficient of determination. The classification algorithm and additional commands can be 
+set through \emph{...} using inputs of the \link[caret]{train} function. Apart from the accuracy assessment, the function stores the 
+performance for each sample.
 If \emph{mode} is "classification", the function will return a logical vector reporting on the correctly assigned classes. If \emph{mode}
 is "regression", the function will report on the percent deviation between the original value and it's predicted value. The final output
 of the function is a list consisting of:
@@ -58,7 +57,7 @@ fieldData <- fieldData[c(1:10),]
 c <- spCentroid(fieldData)
 ev <- as.data.frame(extract(r, c))
 
-cm <- classModel(ev, fieldData$crop, as.character(1:length(fieldData)))
+cm <- classModel(ev, fieldData$crop, as.character(1:length(fieldData)), method="rf")
 
 }
 }

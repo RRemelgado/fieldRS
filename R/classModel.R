@@ -2,11 +2,10 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #' @description Derives a predictive model for
 #' @param x Object of class \emph{data.frame}.
-#' @param y A vector.
-#' @param z A vector.
+#' @param y A vector of class \emph{character} or \emph{numeric}.
+#' @param z A vector of class \emph{character} or \emph{numeric}.
 #' @param mode One of "classification" or "regression".
-#' @param method Classification algorithm. See options provided through \link[caret]{train}.
-#' @param ... Additional arguments passed to \link[caret]{train}.
+#' @param ... Arguments passed to \link[caret]{train}.
 #' @return A two element numeric \emph{vector}.
 #' @importFrom caret train
 #' @importFrom ggplot2 ggplot aes_string theme_bw ylim
@@ -17,8 +16,9 @@
 #' should provide the sample-wise identifiers through \emph{z}. For each unique value in \emph{z}, the function keeps it for validation and
 #' the remaining samples for training. This process is repeated for all sample groups and a final accuracy is estimated from the overall set
 #' of results. If \emph{mode} is "classification", the function will estimate the overall accuracy for each unique value in \emph{y}. If
-#' "regression" is set, the output will be an the coefficient of determination. The classification algorithm can be set with \emph{method}
-#' which passes the argument to \link[caret]{train}. Apart from the accuracy assessment, the function stores the performance for each sample.
+#' "regression" is set, the output will be an the coefficient of determination. The classification algorithm and additional commands can be 
+#' set through \emph{...} using inputs of the \link[caret]{train} function. Apart from the accuracy assessment, the function stores the 
+#' performance for each sample.
 #' If \emph{mode} is "classification", the function will return a logical vector reporting on the correctly assigned classes. If \emph{mode}
 #' is "regression", the function will report on the percent deviation between the original value and it's predicted value. The final output
 #' of the function is a list consisting of:
@@ -42,7 +42,7 @@
 #' c <- spCentroid(fieldData)
 #' ev <- as.data.frame(extract(r, c))
 #' 
-#' cm <- classModel(ev, fieldData$crop, as.character(1:length(fieldData)))
+#' cm <- classModel(ev, fieldData$crop, as.character(1:length(fieldData)), method="rf")
 #' 
 #' }
 #' @export
@@ -50,7 +50,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-classModel <- function(x, y, z, mode="classification", method="rf", ...) {
+classModel <- function(x, y, z, mode="classification", ...) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. Check input variables
@@ -84,7 +84,7 @@ classModel <- function(x, y, z, mode="classification", method="rf", ...) {
       for (r in 1:length(u)) {
         vi <- i[which(z[i] == u[r])]
         ti <- n[!n %in% vi]
-        m <- train(x[ti,], as.factor(y[ti]), method=method)
+        m <- train(x[ti,], as.factor(y[ti]), ...)
         v[vi] <- as.vector(predict(m, x[vi,])) == unique.y[c]}
 
       # derive accuracy
@@ -110,7 +110,7 @@ classModel <- function(x, y, z, mode="classification", method="rf", ...) {
     for (r in 1:length(u)) {
       vi <- which(z == u[r])
       ti <- which(z != u[r])
-      m <- train(x[ti,], y[ti], method=method, ...)
+      m <- train(x[ti,], y[ti], ...)
       v[vi] <- predict(m, x[vi,], y[vi])}
 
     # derive accuracy
