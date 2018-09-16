@@ -36,7 +36,7 @@
 #' 
 #' # read field data
 #' data(fieldData)
-#' fieldData <- fieldData[c(1:10),]
+#' fieldData <- fieldData[c(1:3, 10),]
 #' 
 #' # extract values for polygon centroid
 #' c <- spCentroid(fieldData)

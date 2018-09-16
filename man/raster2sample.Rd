@@ -31,13 +31,12 @@ along their borders (i.e. low frequency). The output is a \emph{SpatialPointsDat
 
  require(raster)
 
- # load example probability image
- file <- system.file('extdata', 'probabilities.tif', package="rsMove")
- img <- raster(file) > 0.5
- img[img != 1] <- NA
+ # load example image
+ r <- raster(system.file("extdata", "ndvi.tif", package="fieldRS")[1])
+ r[r < 5000] <- NA
  
  # extract samples
- samples <- raster2sample(img)
+ samples <- raster2sample(r)
 
 }
 }

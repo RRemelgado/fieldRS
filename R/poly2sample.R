@@ -17,16 +17,15 @@
 #'
 #'  require(raster)
 #'
-#'  # load example probability image
-#'  file <- system.file('extdata', 'probabilities.tif', package="rsMove")
-#'  img <- raster(file)
-#'
-#'  # load area of interest
-#'  file <- system.file('extdata', 'roi.shp', package="rsMove")
-#'  roi <- shapefile(file)
+#'  # read raster data
+#'  r <- raster(system.file("extdata", "ndvi.tif", package="fieldRS")[1])
+#' 
+#'  # read field data
+#'  data(fieldData)
+#'  fieldData <- fieldData[1,]
 #'
 #'  # extract samples
-#'  samples <- poly2sample(roi, img)
+#'  samples <- poly2sample(fieldData, r)
 #'
 #' }
 #' @export
