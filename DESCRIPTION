@@ -9,8 +9,8 @@ BugReports: https://github.com/RRemelgado/fieldRS/issues/
 Maintainer: Ruben Remelgado <ruben.remelgado@uni-wuerzburg.de>
 Description: In remote sensing, designing a field campaign to collect ground-truth data can be a challenging task. We need to collect representative samples while accounting for issues such as budget constraints and limited accessibility created by e.g. poor infrastructure. As suggested by Olofsson et al. (2014) <doi:10.1016/j.rse.2014.02.015>, this demands the establishment of best-practices to collect ground-truth data that avoid the waste of time and funds. 'fieldRS' addresses this issue by helping scientists and practitioners design field campaigns through the identification of priority sampling sites, the extraction of potential sampling plots and the conversion of plots into consistent training and validation samples that can be used in e.g. land cover classification.
 LazyData: TRUE
-Imports: raster, sp, caret, ggplot2, grDevices, spatialEco, rgeos
+Imports: raster, sp, caret, ggplot2, grDevices, spatialEco, rgeos, RStoolbox
 RoxygenNote: 6.1.0
 License: GPL (>= 3)
-Suggests: knitr, rmarkdown, kableExtra, imager, RStoolbox, randomForest, rgdal
+Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal
 VignetteBuilder: knitr
