@@ -5,7 +5,7 @@ R package to support Remote Sensing oriented field work. It was developed at the
 
 ## Examples
 <p align="justify" style="line-height:200%;">
-If you are interested in using the package, consult the tutorial found <a href="https://cran.r-project.org/web/packages/fieldRS/vignettes/fieldRS.html"> here</a>
+If you are interested in using the package, consult the tutorial found <a href="https://cran.r-project.org/web/packages/fieldRS/vignettes/fieldRS.html"> here</a>.
 </p>
 
 </br>
