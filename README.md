@@ -11,8 +11,9 @@ fieldRS was designed to ease the collection and management of ground truth data.
 </p>
 
 </br>
-## Financed by
+
+## Supported by
 <p>
-<a href="https://www.orn.mpg.de/en/"><img width="250" height="50" src="https://www.gfz-potsdam.de/fileadmin/_processed_/0/8/csm_CAWa_Logo_ae5c278929.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.geographie.uni-wuerzburg.de/en/fernerkundung/startseite/"><img width="150" height="100" src="https://www.uni-wuerzburg.de/typo3conf/ext/uw_sitepackage/Resources/Public/Images/uni-wuerzburg-logo.svg"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.dlr.de/eoc/en/desktopdefault.aspx/tabid-5278/8856_read-15911/"><img width="115" height="100" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/DLR_Logo.svg/744px-DLR_Logo.svg.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.auswaertiges-amt.de/en/"><img width="220" height="100" src="https://www.ifa.de/fileadmin/content/logos/A/aa_englisch.jpg"></a>
+<a href="https://www.orn.mpg.de/en/"><img width="250" height="50" src="https://www.gfz-potsdam.de/fileadmin/_processed_/0/8/csm_CAWa_Logo_ae5c278929.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.geographie.uni-wuerzburg.de/en/fernerkundung/startseite/"><img width="130" height="80" src="https://www.uni-wuerzburg.de/typo3conf/ext/uw_sitepackage/Resources/Public/Images/uni-wuerzburg-logo.svg"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.dlr.de/eoc/en/desktopdefault.aspx/tabid-5278/8856_read-15911/"><img width="115" height="100" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/DLR_Logo.svg/744px-DLR_Logo.svg.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.auswaertiges-amt.de/en/"><img width="190" height="70" src="https://www.ifa.de/fileadmin/content/logos/A/aa_englisch.jpg"></a>
 </p>
 </br>
