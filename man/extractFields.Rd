@@ -4,10 +4,12 @@
 \alias{extractFields}
 \title{extractFields}
 \usage{
-extractFields(x)
+extractFields(x, method, ...)
 }
 \arguments{
 \item{x}{Object of class \emph{RasterLayer}.}
+
+\item{y}{method One of "extent" or "chull"}
 }
 \value{
 A \emph{SpatialPolygonsDataFrame}.
@@ -16,16 +18,19 @@ A \emph{SpatialPolygonsDataFrame}.
 Extracts and vectorizes clumps of pixels with equal value within a raster object.
 }
 \details{
-{Given a segmented image as \emph{x}, the function extracts patches of pixels with equal value. For each 
-pixel region, the function extracts the center pixel coordinates and derives their minimum convex polygon. Then, 
-for each polygon, the derives a ratio between the area of the polygon and the area of the pixel region. Ratios 
-below zero suggest that the region has a clearly defined shape (e.g. rectangular). Clumps is less than 3 points 
-are ignored. The output of the function is a \emph{SpatialPolygonsDataFrame} reporting on:
+{Assuming \emph{x} is a classified or segmented image, this function segments it using 
+\link{ccLabel} and, draws polygons for each group of connected pixels. The waz polzgons are drawn 
+depends on the \emph{method} keyword. The function will accept one of the following options:
 \itemize{
- \item{\emph{Region ID} - Unique polygon identifier.}
- \item{\emph{Area} - Polygon Area (in square meters).}
- \item{\emph{Perimeter} - Polygon perimeter (in square meters).}
- \item{\emph{Pixel \%} - Percentage of non-NA pixels.}}}
+  \item{\emph{chull} - Extracts the center pixel coordinates and builds a polygon based on their minimum convex hull.}
+  \item{\emph{smooth} - Aggregates pixels to 2x the resolution to fill data gaps, disaggregates them to the original 
+  resolution, applies an erosion flter and converts the output to a polygon.}}
+Once this process is completed, the function derives a \emph{SpatialPolygonsDataFrame} reporting on:
+\itemize{
+ \item{\emph{region.id} - Unique polygon identifier corresponding to the original pixel region.}
+ \item{\emph{area} - Polygon Area (in square meters).}
+ \item{\emph{perimeter} - Polygon perimeter (in meters).}
+ \item{\emph{percent.cover} - Ration between the polygon area and the area of the corresponding pixels.}}}
 }
 \examples{
 {

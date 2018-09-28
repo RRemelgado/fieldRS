@@ -16,6 +16,17 @@
 #'   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
 #' }
 #' @return A \emph{character} vector.
+#' @example {
+#' 
+#' data(fieldData) # ground truth data
+#' 
+#' unique.crop <- labelCheck(fieldData$crop)
+#' unique.crop$label.count.plot # show label count (original)
+#' 
+#' corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
+#' corrected.labels$label.count.plot # show label count (corrected)
+#' 
+#' }
 #' @seealso \code{\link{extractFields}}
 #' @export
 
@@ -44,20 +55,24 @@ labelCheck <- function(x, y, z) {
   # no correction needed (return unique values)
   if (!correct) {
     s.labels <- unique(x)
-    if (sum(is.na(s.labels)) > 0) {stop('NA values found in shapefile (please fix before proceeding)')}}
+    if (sum(is.na(s.labels)) > 0) {stop('NA values found in shapefile (please fix before proceeding)')}
+    count <- data.frame(count=sapply(s.labels, function(l) {sum(x==l, na.rm=TRUE)}), label=unique(s.labels))
+  }
   
   # correction needed (update original labels with corrected values)
   if (correct) {
     s.labels <- x
     for (l in 1:length(y)) {
       i <- which(x == y[l])
-      if (length(i) > 0) {s.labels[i] <- z[l]}}}
+      if (length(i) > 0) {s.labels[i] <- z[l]}}
+    count <- data.frame(count=sapply(unique(z), function(l) {sum(s.labels==l, na.rm=TRUE)}), label=unique(s.labels))
+  }
   
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   # 3. count unique values
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   
-  count <- data.frame(count=sapply(unique(s.labels), function(l) {sum(s.labels==l, na.rm=TRUE)}), label=unique(s.labels))
+  
   
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   # 4. derive plot with unique labels per

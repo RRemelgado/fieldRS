@@ -1,5 +1,21 @@
 =================================================================================
 
+#### fieldRS 0.1.2
+
+=================================================================================
+
+### New
+  * Added functions simpleTrace() and smoothTrace()
+  
+### Fixes
+  * Update vignette
+  * labelCheck() now returns correct sample frequencies
+
+### Changes
+  * Added "method"" choice to extractFields() which changes how polygons are drawn
+
+=================================================================================
+
 #### fieldRS 0.1.1
 
 =================================================================================

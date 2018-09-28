@@ -25,7 +25,8 @@ Erosion and dilation filter of a raster image.
 require(raster)
 
 # read raster data
-r <- raster(system.file("extdata", "ndvi.tif", package="fieldRS"))
+r <- raster(system.file("extdata", "ndvi.tif", package="fieldRS")) > 2000
+r[r == 0] <- NA
 
 # filter image (3x3 erosion)
 or <- pixFilter(r, 1, "erode")
