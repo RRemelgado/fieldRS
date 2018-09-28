@@ -85,7 +85,7 @@ ccLabel <- function(x, method='simple', change.threshold=NULL) {
   }
 
   if (method == 'spatial') {
-    regions <- focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE)
+    regions <- focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE, padValue=NA)
     regions[regions > change.threshold] <- NA
     regions <- clump(regions)}
   
