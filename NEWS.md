@@ -12,7 +12,7 @@
   * labelCheck() now returns correct sample frequencies
 
 ### Changes
-  * Added "method"" choice to extractFields() which changes how polygons are drawn
+  * extractFields() provides multiple methods to draw polygons
 
 =================================================================================
 
