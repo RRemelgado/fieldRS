@@ -6,8 +6,9 @@
 #' @param z Vector of class \emph{character}.
 #' @param auto Logica argument. Default is FALSE.
 #' @importFrom ggplot2 aes_string geom_bar theme_bw theme xlab ylab element_text
-#' @details {If \emph{y} and \emph{z} are missing, the function will return the unique values among
 #' @importFrom stringdist stringdist
+#' @return A \emph{character} vector.
+#' @details {If \emph{y} and \emph{z} are missing, the function will return the unique values among
 #' all the elements of \emph{y}. Otherwise, the function will provide a corrected copy of \emph{y}.
 #' Additionally, the function will count the number of records for each of the unique labels from 
 #' which a plot will be built. The final output consists of:
@@ -18,17 +19,22 @@
 #'   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
 #' If \emph{auto} is set to TRUE, the user can ignore \emph{z} to correct the existing labels. Instead, the 
 #' user can pprovide all the potential cases through \emph{y}. Then, for each element in \emph{x}, the function 
-#' will return the most similar element in \emph{y} using the \code{\link[MASS]{stringdist}} function.}
-#' @return A \emph{character} vector.
+#' will return the most similar element in \emph{y} using the \code{\link[stringdist]{stringdist}} function.}
 #' @example {
+#' 
+#' require(fieldRS)
 #' 
 #' data(fieldData) # ground truth data
 #' 
 #' unique.crop <- labelCheck(fieldData$crop)
-#' unique.crop$label.count.plot # show label count (original)
+#' unique.crop$label.count.plot # label count (original)
 #' 
-#' corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
-#' corrected.labels$label.count.plot # show label count (corrected)
+#' nc <- c("wheat", "not-wheat", "not-wheat")) # new classes
+#' 
+#' corrected.labels <- labelCheck(fieldData$crop, 
+#' unique.crop$labels, nc)
+#' 
+#' corrected.labels$label.count.plot # show label count
 #' 
 #' }
 #' @seealso \code{\link{extractFields}}
@@ -49,7 +55,7 @@ labelCheck <- function(x, y, z, auto=FALSE) {
   if (!is.character(x)) {stop('"x" is not a character vector')}
   
   # check if y and z are provided (manual correction)
-  if (!missing(y) & !missing(z) & auto=FALSE) {
+  if (!missing(y) & !missing(z) & !auto) {
     if (sum(duplicated(y)) > 0) {stop('duplicated records in "y"')}
     if (length(y) != length(z)) {stop('"y" and "z" have different lengths')}
     correct <- TRUE

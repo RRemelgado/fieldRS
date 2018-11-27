@@ -13,5 +13,5 @@ LazyData: TRUE
 Imports: raster, sp, caret, ggplot2, grDevices, spatialEco, rgeos, stringdist
 RoxygenNote: 6.1.0
 License: GPL (>= 3)
-Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox
+Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox, stringdist
 VignetteBuilder: knitr

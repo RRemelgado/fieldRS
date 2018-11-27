@@ -4,12 +4,12 @@
 \alias{extractFields}
 \title{extractFields}
 \usage{
-extractFields(x, method, ...)
+extractFields(x, method = "chull", ...)
 }
 \arguments{
 \item{x}{Object of class \emph{RasterLayer}.}
 
-\item{y}{method One of "extent" or "chull"}
+\item{y}{method. One of "smooth" or "chull"}
 }
 \value{
 A \emph{SpatialPolygonsDataFrame}.

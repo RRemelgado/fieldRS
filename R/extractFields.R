@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #' @description Extracts and vectorizes clumps of pixels with equal value within a raster object.
 #' @param x Object of class \emph{RasterLayer}.
-#' @param y method One of "extent" or "chull"
+#' @param y method. One of "smooth" or "chull"
 #' @return A \emph{SpatialPolygonsDataFrame}.
 #' @importFrom raster rasterToPoints res crs cellStats area crop
 #' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
@@ -40,7 +40,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-extractFields <- function(x, method, ...) {
+extractFields <- function(x, method="chull", ...) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. Check input variables
@@ -71,7 +71,7 @@ extractFields <- function(x, method, ...) {
     # build polygons from convex hull
     pc <- lapply(uv, function(u) {
       i <- which(rp[,3]==u)
-      p <- smoothTrace(crop(x, extent(rp[i,1:2])), 1)
+      if (length(i) > 2) {p <- smoothTrace(crop(x, extent(rp[i,1:2])), 1)} else {p <- NULL}
       if (!is.null(p)) {p$id <- u}
       return(p)})
     
@@ -81,7 +81,8 @@ extractFields <- function(x, method, ...) {
     
     # build polygons from convex hull
     pc <- lapply(uv, function(u) {
-      p <- simpleTrace(rp[which(rp[,3]==u),1:2])
+      i <- which(rp[,3]==u)
+      if (length(i) > 2) {p <- simpleTrace(rp[i,1:2])} else {p <- NULL}
       if (!is.null(p)) {p$id <- u}
       return(p)})
     
@@ -93,7 +94,9 @@ extractFields <- function(x, method, ...) {
   }
 
   # remove unused entries and build SpatialPolygons
-  shp <- SpatialPolygons(pc, proj4string=crs(x))
+  pc <- pc[sapply(pc, function(p) {!is.null(p)})]
+  shp <- pc[[1]]
+  for (p in 2:length(pc)) {shp <- rbind(shp, pc[[p]], makeUniqueIDs = TRUE)}
 
   rm(pc)
   
@@ -103,7 +106,7 @@ extractFields <- function(x, method, ...) {
 
   # needed information to extimate polygon complexity
   pixel.area <- res(x) # pixel resolution
-  pixel.area <- r[1] * r[2] # pixel area
+  pixel.area <- pixel.area[1] * pixel.area[2] # pixel area
   
   # check if regions are contained by their polygons and evaluate shape
   shp@data <- lapply(1:length(shp), function(i) {

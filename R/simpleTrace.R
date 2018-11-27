@@ -45,7 +45,7 @@ simpleTrace <- function(x) {
   
   # data type check (2)
   if (class(x)[1] %in% c("SpatialPoints", "SpatialPointsDataFrame")) {
-    rp <- crs(x) # extract projection
+    rp <- crs(x)@projargs # extract projection
     x <- x@coords # extract coordinates
   }
   
@@ -57,7 +57,8 @@ simpleTrace <- function(x) {
   
   # derive polygon
   if (length(ic) > 2) {
-    return(SpatialPolygons(list(Polygons(list(Polygon(x[c(ic,ic[1]),])), ID=1)), proj4string=rp))
+    if (!is.na(rp)) {return(SpatialPolygons(list(Polygons(list(Polygon(x[c(ic,ic[1]),])), ID=1)), proj4string=crs(rp)))}
+    if (is.na(rp)) {return(SpatialPolygons(list(Polygons(list(Polygon(x[c(ic,ic[1]),])), ID=1))))}
   } else {
     return(NULL)
   }

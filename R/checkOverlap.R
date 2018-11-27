@@ -33,14 +33,13 @@ checkOverlap <- function(x, y) {
 # 1. Check input variables
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-  r1 <- tryCatch(extent(x), error=function(e) return(FALSE)) # is x a spatial object?
-  r2 <- tryCatch(extent(y), error=function(e) return(FALSE)) # is y a spatial object?
-  if (!isTRUE(r1) & isTRUE(r2)) {return(warning('"x" is not a spatial object'))}
-  if (isTRUE(r1) & !isTRUE(r2)) {return(warning('"y" is not a spatial object'))}
-  if (!isTRUE(r1) & !isTRUE(r2)) {return(warning('neither "x" and "y" are spatial object'))}
+  r1 <- tryCatch(extent(x), error=function(e) return(NULL)) # is x a spatial object?
+  r2 <- tryCatch(extent(y), error=function(e) return(NULL)) # is y a spatial object?
+  if (is.null(x)) {return(warning('"x" is not a spatial object'))}
+  if (is.null(y)) {return(warning('"y" is not a spatial object'))}
 
-  oc <- tryCatch(intersect(r1,r2), error=function(e) return(FALSE)) # do they overlap?
-  if (!isTRUE(oc)) {return(c(0,0))}
+  oc <- tryCatch(intersect(r1,r2), error=function(e) return(NULL)) # do they overlap?
+  if (is.null(oc)) {return(c(0,0))}
 
   #-----------------------------------------------------------------------------------------------------------------------------------------------#
   # 2. Compare input variables

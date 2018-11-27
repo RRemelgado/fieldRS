@@ -19,6 +19,12 @@ A \emph{RasterLayer}.
 \description{
 Erosion and dilation filter of a raster image.
 }
+\details{
+{Uses \link[raster]{focal} to filter \emph{x} using either an erosion or a dilation filter, specified by \emph{method}. If 
+"erosion" is chosen, the function will identify and filter out border pixels around each cluster of pixels in \emph{x}. Small or isolated 
+groups of pixels will also be removed. If "dilation" is set, the function will increase the size of each cluster of pixels and simultaneously 
+remove all gaps within them. The size of the buffer used in this function is defined by \emph{y} and is expressed in number of pixels.}
+}
 \examples{
 {
 
