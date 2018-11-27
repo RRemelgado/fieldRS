@@ -94,7 +94,6 @@ extractFields <- function(x, method="chull", ...) {
   }
 
   # remove unused entries and build SpatialPolygons
-  pc <- pc[sapply(pc, function(p) {!is.null(p)})]
   shp <- pc[[1]]
   for (p in 2:length(pc)) {shp <- rbind(shp, pc[[p]], makeUniqueIDs = TRUE)}
 
@@ -109,18 +108,11 @@ extractFields <- function(x, method="chull", ...) {
   pixel.area <- pixel.area[1] * pixel.area[2] # pixel area
   
   # check if regions are contained by their polygons and evaluate shape
-  shp@data <- lapply(1:length(shp), function(i) {
+  shp@data <- do.call(rbind,lapply(1:length(shp), function(i) {
     pp <- polyPerimeter(shp[i,])
     pa <- area(shp[i,])
-    pc <- pa / (cellStats(x == shp$id[i], na.rm=TRUE) * pixel.area)
-    return(list(pp=pp, pa=pa))})
-
-  # build SpatialPolygonsDataFrame
-  shp@data <- data.frame(region.id=uv, area=sapply(shp.info, function(i) {i$pa}), 
-                    perimeter=sapply(shp.info, function(i) {i$pp}), 
-                    percent.cover = sapply(shp.info, function(i) {i$pc}))
-
-  shp <- SpatialPolygonsDataFrame(shp, odf)
+    pc <- pa / (cellStats(x == shp$id[i], sum, na.rm=TRUE) * pixel.area)
+    return(data.frame(pp=pp, pa=pa))}))
 
   return(shp)
 
