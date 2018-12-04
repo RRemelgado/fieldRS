@@ -18,11 +18,14 @@
 #' cp <- spCentroid(fieldData)
 #' 
 #' # build single polygon from centroid points
-#' p <- simpleTrace(cp)
+#' p1 <- simpleTrace(cp)
+#' 
+#' p2 <- smoothTrace(rasterize(p, raster(extent(p), res=30, crs=crs(p))), 1)
 #' 
 #' # compare objects
-#' plot(p)
+#' plot(p1)
 #' points(cp, col="red")
+#' plot(p2, add=TRUE, border="blue")
 #' 
 #' }
 #' @export

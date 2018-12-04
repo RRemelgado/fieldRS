@@ -3,7 +3,7 @@
 #' @description Erosion and dilation filter of a raster image.
 #' @param x Object of class \emph{RasterLayer}.
 #' @param y A \emph{numeric} element.
-#' @param z A \emph{character} element. One of "erosion" or "dilation".
+#' @param method A \emph{character} element. One of "erosion" or "dilation".
 #' @return A \emph{RasterLayer}.
 #' @importFrom raster focal
 #' @details {Uses \link[raster]{focal} to filter \emph{x} using either an erosion or a dilation filter, specified by \emph{method}. If 

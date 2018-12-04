@@ -6,8 +6,12 @@
 =================================================================================
 
 ### New
-  * labelCheck() now allows the auto-correct of labels given a reference set 
-
+  * extractFields() offers multiple drawing options
+  * added simpleTrace(), smoothTrace() and complexTrace() to draw polygons
+  
+### Changes
+  * labelCheck() corrects labels automatically given a reference set
+  * poly2sample() preserves the unique identifiers of each polygon
 
 =================================================================================
 

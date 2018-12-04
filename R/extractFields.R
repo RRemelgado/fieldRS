@@ -2,7 +2,8 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #' @description Extracts and vectorizes clumps of pixels with equal value within a raster object.
 #' @param x Object of class \emph{RasterLayer}.
-#' @param y method. One of "smooth" or "chull"
+#' @param method One of "chull" or "smooth".
+#' @param ... Further arguments to pass to \link{ccLabel}.
 #' @return A \emph{SpatialPolygonsDataFrame}.
 #' @importFrom raster rasterToPoints res crs cellStats area crop
 #' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
