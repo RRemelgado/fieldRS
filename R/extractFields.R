@@ -9,12 +9,12 @@
 #' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
 #' @importFrom spatialEco polyPerimeter
 #' @details {Assuming \emph{x} is a classified or segmented image, this function segments it using 
-#' \link{ccLabel} and, draws polygons for each group of connected pixels. The waz polzgons are drawn 
+#' \link{ccLabel} and, draws polygons for each group of connected pixels. The way polygons are drawn 
 #' depends on the \emph{method} keyword. The function will accept one of the following options:
 #' \itemize{
 #'   \item{\emph{chull} - Extracts the center pixel coordinates and builds a polygon based on their minimum convex hull.}
 #'   \item{\emph{smooth} - Aggregates pixels to 2x the resolution to fill data gaps, disaggregates them to the original 
-#'   resolution, applies an erosion flter and converts the output to a polygon.}}
+#'   resolution, applies an erosion filter and converts the output to a polygon.}}
 #' Once this process is completed, the function derives a \emph{SpatialPolygonsDataFrame} reporting on:
 #' \itemize{
 #'  \item{\emph{region.id} - Unique polygon identifier corresponding to the original pixel region.}

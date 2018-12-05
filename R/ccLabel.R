@@ -19,7 +19,7 @@
 #' the output. If the value is negative, the function will return the pixels that are below the threshold and vice 
 #' versa when positive. Let's assume we are dealing with crop fields. When, using a negative threshold and the 
 #' \emph{spatial} method, the function will return homogeneous groups of pixels. This happens because the borders 
-#' of between fields offer a contract and thus receive higher MAPE values. Houwever, if we apply the same threshold 
+#' of between fields offer a contract and thus receive higher MAPE values. However, if we apply the same threshold 
 #' when using the \emph{temporal} method, the borders will be highlighted. This happens because the crop fields are 
 #' more variant over time due to their fast growth while the borders remain virtually unchanged. The final output 
 #' of the function is a list consisting of:

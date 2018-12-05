@@ -4,7 +4,7 @@
 #' @param x Vector of class \emph{character}.
 #' @param y Vector of class \emph{character}.
 #' @param z Vector of class \emph{character}.
-#' @param auto Logica argument. Default is FALSE.
+#' @param auto Logical argument. Default is FALSE.
 #' @importFrom ggplot2 aes_string geom_bar theme_bw theme xlab ylab element_text
 #' @importFrom stringdist stringdist
 #' @return A \emph{character} vector.
@@ -18,7 +18,7 @@
 #'  \item{\emph{label.count} - Count of occurrences in \emph{unique.labels} per each element in \emph{x}.}
 #'   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
 #' If \emph{auto} is set to TRUE, the user can ignore \emph{z} to correct the existing labels. Instead, the 
-#' user can pprovide all the potential cases through \emph{y}. Then, for each element in \emph{x}, the function 
+#' user can provide all the potential cases through \emph{y}. Then, for each element in \emph{x}, the function 
 #' will return the most similar element in \emph{y} using the \code{\link[stringdist]{stringdist}} function.}
 #' @example {
 #' 
