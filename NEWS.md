@@ -1,17 +1,18 @@
 
 =================================================================================
 
-#### fieldRS 0.1.2
+#### fieldRS 0.2.1
 
 =================================================================================
 
 ### New
   * extractFields() offers multiple drawing options
-  * added simpleTrace(), smoothTrace() and complexTrace() to draw polygons
-  
-### Changes
+  * added simpleTrace() and smoothTrace() to draw polygons from points/raster
+  * ecDistance now accepts matrices and data.frames
   * labelCheck() corrects labels automatically given a reference set
   * poly2sample() preserves the unique identifiers of each polygon
+  * ccLabel() allows positive/negative thresholds (informs if the output 
+    should be higher or lower than the specified value)
 
 =================================================================================
 

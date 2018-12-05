@@ -1,9 +1,9 @@
 Package: fieldRS
 Type: Package
 Title: Remote Sensing Field Work Tools
-Version: 0.1.1
-Date: 2018-09-16
-Authors@R: person("Ruben", "Remelgado", role = c("aut", "cre"), email="ruben.remelgado@uni-wuerzburg.de")
+Version: 0.2.1
+Date: 2018-12-05
+Authors@R: person("Ruben", "Remelgado", role = c("aut", "cre"), email="remelgado.ruben@gmail.com")
 URL: https://github.com/RRemelgado/fieldRS/
 BugReports: https://github.com/RRemelgado/fieldRS/issues/
 Maintainer: Ruben Remelgado <ruben.remelgado@uni-wuerzburg.de>
@@ -13,5 +13,5 @@ LazyData: TRUE
 Imports: raster, sp, caret, ggplot2, grDevices, spatialEco, rgeos, stringdist
 RoxygenNote: 6.1.0
 License: GPL (>= 3)
-Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox, stringdist
+Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox
 VignetteBuilder: knitr

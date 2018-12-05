@@ -4,6 +4,7 @@
 #' @param x Object of class \emph{SpatialPolygons} or \emph{SpatialPolygonDataFrame}.
 #' @param y A raster object or a numeric element.
 #' @param preserve.id Logical. Should the output be polygon-wide?
+#' @param min.cover A numeric element between 0 and 1.
 #' @importFrom raster raster extent crop rasterToPoints rasterize xyFromCell cellFromXY crs
 #' @importFrom sp SpatialPointsDataFrame
 #' @seealso \code{\link{raster2sample}} \code{\link{ccLabel}}
@@ -13,12 +14,13 @@
 #' than a raster object. For each polygon in (\emph{"x"}), \emph{poly2sample} extracts the overlapping 
 #' pixels of a reference grid. Then, for each pixel, the function estimates the percentage of it that is 
 #' covered by the reference polygon. If \emph{y} is a raster object, the function will use it as a reference  
-#' grid. If \emph{y} is a numeric element, the function will build a raster from the extent of \emph{x} and a 
-#' resolution equal to \emph{y}. Sometimes, two or more polygons can cover the same pixel. When this happens, 
+#' grid. If \emph{y} is a numeric element, the function will build a raster from the extent of \emph{x} and 
+#' a resolution equal to \emph{y}. Sometimes, two or more polygons can cover the same pixel. When this happens, 
 #' the function will assign this pixel to each of the overlapping polygons and thus replicate this sample. When 
 #' we want to analyze each polygon individually this can be useful. However, if e.g. the polygons are all of same 
-#' class and we want to  avoid replicated samples, we can sert \emph{preserve.id} to FALSE. When doing so, the funciton 
-#' will identify all the unique pixels covered polygons and for, the duplicated it will sum the percent cover values.}
+#' class and we want to  avoid replicated samples, we can sert \emph{preserve.id} to FALSE. When doing so, the 
+#' funciton will identify all the unique pixels covered polygons and for, the duplicated it will sum the percent 
+#' cover values. Points with percent values below \emph{min.cover} will be ommited from the output.}
 #' @examples {
 #'
 #'  require(raster)
@@ -38,7 +40,7 @@
 
 #-------------------------------------------------------------------------------------------------------------------------#
 
-poly2sample <- function(x, y, preserve.id=TRUE) {
+poly2sample <- function(x, y, preserve.id=TRUE, min.cover=0) {
 
 #-------------------------------------------------------------------------------------------------------------------------#
 # 1. Check input variables
@@ -55,7 +57,7 @@ poly2sample <- function(x, y, preserve.id=TRUE) {
     if (class(e) == "try-error") {stop('"y" is not of a valid class')}}
   
   # how should the data be handled?
-  if (!logical(preserve.id)) {stop('"preserve.id" is not a logical argument')}
+  if (!is.logical(preserve.id)) {stop('"preserve.id" is not a logical argument')}
 
   # check overlap between x and y
   o <- checkOverlap(x, y)
@@ -68,17 +70,15 @@ poly2sample <- function(x, y, preserve.id=TRUE) {
   lf <- function(i) {
     r <- extend(crop(y[[1]], extent(x[i,])), 1)
     r <- rasterToPoints(rasterize(x[i,], r, getCover=TRUE))
-    return(data.frame(x=r[,1], y=r[,2], c=r[,3], id=i))}
+    return(data.frame(x=r[,1], y=r[,2], cover=r[,3], id=i))}
 
   df0 <- lapply(1:length(x), lf)
   df0 <- do.call(rbind, df0)
-  df0 <- df0[which(df0$c > 0),]
+  df0 <- df0[which(df0$cover > 0),]
   
 #-------------------------------------------------------------------------------------------------------------------------#
 # 3. report
 #-------------------------------------------------------------------------------------------------------------------------#
-  
-
   
   if (nrow(df0) > 0) {
     
@@ -87,8 +87,8 @@ poly2sample <- function(x, y, preserve.id=TRUE) {
       
       pp <- cellFromXY(y, df0[,c("x", "y")]) # pixel positions
       up <- unique(pp) # unique positions
-      pc <- sapply(up, function(x) {sum(df0$c[which(pp==x)])}) # update percentages
-      pc[which(pc>100)] <- 100 # account for miss-calculations (related to e.g. overlapping polygons)
+      pc <- sapply(up, function(x) {sum(df0$cover[which(pp==x)])}) # update percentages
+      pc[which(pc>1)] <- 1 # account for miss-calculations (related to e.g. overlapping polygons)
       xy <- xyFromCell(y, up) # convert unique positions to coordinates
       df0 <- data.frame(x=xy[,1], y=xy[,2], cover=pc) # build final data frame
       
@@ -96,6 +96,8 @@ poly2sample <- function(x, y, preserve.id=TRUE) {
       
     }
     
+    # filter unwanted points
+    df0 <- df0[which(df0$cover >= min.cover),]
     
     # return output
     return(SpatialPointsDataFrame(df0[,1:2], df0, proj4string=crs(x)))

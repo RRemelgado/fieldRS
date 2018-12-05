@@ -3,7 +3,6 @@
 export(ccLabel)
 export(checkOverlap)
 export(classModel)
-export(complexTrace)
 export(derivePlots)
 export(ecDistance)
 export(extractFields)

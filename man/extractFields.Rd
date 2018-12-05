@@ -9,7 +9,9 @@ extractFields(x, method = "chull", ...)
 \arguments{
 \item{x}{Object of class \emph{RasterLayer}.}
 
-\item{y}{method. One of "smooth" or "chull"}
+\item{method}{One of "chull" or "smooth".}
+
+\item{...}{Further arguments to pass to \link{ccLabel}.}
 }
 \value{
 A \emph{SpatialPolygonsDataFrame}.

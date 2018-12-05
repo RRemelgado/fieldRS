@@ -9,6 +9,8 @@
 #' @details {builds a \emph{SpatialPolygons} object defined as the convex hull of a set of coordinate pairs provided through \emph{x}.}
 #' @examples {
 #' 
+#' require(raster)
+#' 
 #' # read reference data
 #' data(fieldData)
 #' 

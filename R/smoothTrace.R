@@ -11,16 +11,19 @@
 #' valuesin \emph{x} and derives a \emph{SpatialPolygons} object.}
 #' @examples {
 #' 
+#' require(raster) 
+#'
 #' # read reference data
 #' data(fieldData)
 #' 
 #' # extract centroids for each polygon
 #' cp <- spCentroid(fieldData)
 #' 
-#' # build single polygon from centroid points
+#' # build single polygon from centroid points (simple)
 #' p1 <- simpleTrace(cp)
 #' 
-#' p2 <- smoothTrace(rasterize(p, raster(extent(p), res=30, crs=crs(p))), 1)
+#' # build polygon from raster (smooth)
+#' p2 <- smoothTrace(rasterize(p1, raster(extent(p1), res=30, crs=crs(p1))), 1)
 #' 
 #' # compare objects
 #' plot(p1)
@@ -45,10 +48,10 @@ smoothTrace <- function(x, f) {
 # 2. sort tracking
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
   
-  w <- (w*2)+1 # update window
+  f <- (f*2)+1 # update window
   
-  x0 <- extend(x, w) # pad image
-  x0 <- disaggregate(aggregate(x0, fact=f, max, na.rm=TRUE), fact=w) > 0 # aggregate image (fills gaps)
+  x0 <- extend(x, f) # pad image
+  x0 <- disaggregate(aggregate(x0, fact=f, max, na.rm=TRUE), fact=f) > 0 # aggregate image (fills gaps)
   p <- rasterToPolygons(crop(x0,x), fun=function(i) {i == 1}, na.rm=TRUE, dissolve=TRUE) # derive polzgon
   
   return(p)

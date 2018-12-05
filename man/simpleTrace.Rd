@@ -21,6 +21,8 @@ Outlines a set of spatial points and returns a \emph{SpatialPolygons} object.
 \examples{
 {
 
+require(raster)
+
 # read reference data
 data(fieldData)
 

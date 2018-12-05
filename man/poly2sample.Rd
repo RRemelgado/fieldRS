@@ -4,7 +4,7 @@
 \alias{poly2sample}
 \title{poly2sample}
 \usage{
-poly2sample(x, y, preserve.id = TRUE)
+poly2sample(x, y, preserve.id = TRUE, min.cover = 0)
 }
 \arguments{
 \item{x}{Object of class \emph{SpatialPolygons} or \emph{SpatialPolygonDataFrame}.}
@@ -12,6 +12,8 @@ poly2sample(x, y, preserve.id = TRUE)
 \item{y}{A raster object or a numeric element.}
 
 \item{preserve.id}{Logical. Should the output be polygon-wide?}
+
+\item{min.cover}{A numeric element between 0 and 1.}
 }
 \value{
 A \emph{SpatialPointsDataFrame} with sampled pixels reporting on polygon percent coverage.
@@ -25,12 +27,13 @@ package making it more efficient over large areas and converting its output into
 than a raster object. For each polygon in (\emph{"x"}), \emph{poly2sample} extracts the overlapping 
 pixels of a reference grid. Then, for each pixel, the function estimates the percentage of it that is 
 covered by the reference polygon. If \emph{y} is a raster object, the function will use it as a reference  
-grid. If \emph{y} is a numeric element, the function will build a raster from the extent of \emph{x} and a 
-resolution equal to \emph{y}. Sometimes, two or more polygons can cover the same pixel. When this happens, 
+grid. If \emph{y} is a numeric element, the function will build a raster from the extent of \emph{x} and 
+a resolution equal to \emph{y}. Sometimes, two or more polygons can cover the same pixel. When this happens, 
 the function will assign this pixel to each of the overlapping polygons and thus replicate this sample. When 
 we want to analyze each polygon individually this can be useful. However, if e.g. the polygons are all of same 
-class and we want to  avoid replicated samples, we can sert \emph{preserve.id} to FALSE. When doing so, the funciton 
-will identify all the unique pixels covered polygons and for, the duplicated it will sum the percent cover values.}
+class and we want to  avoid replicated samples, we can sert \emph{preserve.id} to FALSE. When doing so, the 
+funciton will identify all the unique pixels covered polygons and for, the duplicated it will sum the percent 
+cover values. Points with percent values below \emph{min.cover} will be ommited from the output.}
 }
 \examples{
 {

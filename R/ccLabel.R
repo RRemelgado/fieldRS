@@ -6,15 +6,23 @@
 #' @param change.threshold Numeric element.
 #' @return A list.
 #' @importFrom raster which.max raster extent crs res cellStats clump focal calc freq
-#' @details {Uses a 8-neighbor connected component labeling algorithm (determined by \emph{method}) to identify groups of pixels of the same
-#' value. Each group receives a distinct numeric label. The function provides two connected component labeling algorithms:
+#' @details {Uses a 8-neighbor connected component labeling algorithm (determined by \emph{method}) to identify groups of 
+#' pixels of the same value. Each group receives a distinct numeric label. The function provides two connected component 
+#' labeling algorithms:
 #' \itemize{
 #'  \item{\emph{simple} - Connects neighboring pixels with the same value. Suitable for categorical data.}
 #'  \item{\emph{spatial} - Estimates the MAPE using a 3x3 moving window distinguishes neighboring pixels 
-#'  when the spatial change is lower than \emph{change.threshold}.}
+#'  when the spatial change surpasses \emph{change.threshold}.}
 #'  \item{\emph{temporal} - Estimates the MAPE among all bands in a raster object and distinguishes spatially 
-#'  neighboring pixels when the temporal change is higher than \emph{change.threshold}.}}
-#' The final output of the function is a list consisting of:
+#'  neighboring pixels when the temporal change surpasses \emph{change.threshold}.}}
+#' When using the \emph{spatial} and \emph{temporal} methods, the value of \emph{change.threshold} will influence 
+#' the output. If the value is negative, the function will return the pixels that are below the threshold and vice 
+#' versa when positive. Let's assume we are dealing with crop fields. When, using a negative threshold and the 
+#' \emph{spatial} method, the function will return homogeneous groups of pixels. This happens because the borders 
+#' of between fields offer a contract and thus receive higher MAPE values. Houwever, if we apply the same threshold 
+#' when using the \emph{temporal} method, the borders will be highlighted. This happens because the crop fields are 
+#' more variant over time due to their fast growth while the borders remain virtually unchanged. The final output 
+#' of the function is a list consisting of:
 #' \itemize{
 #'  \item{\emph{regions} - \emph{RasterLayer} object with region labels.}
 #'  \item{\emph{frequency} - \emph{data.frame} object with the pixel count for each unique value in \emph{regions}.}}}
@@ -82,17 +90,19 @@ ccLabel <- function(x, method='simple', change.threshold=NULL) {
       c <- cellStats(regions, max, na.rm=TRUE)
     }
 
+  } else {
+    
+    # map change
+    if (method == 'spatial') {regions <- focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE, padValue=NA)}
+    if (method == 'temporal') {regions <- calc(x, mape)}
+    
+    # apply threshold
+    if (change.threshold > 0) {regions[regions > change.threshold] <- NA} else {regions[regions < abs(change.threshold)] <- NA}
+    
+    # label regions
+    regions <- clump(regions)
+    
   }
-
-  if (method == 'spatial') {
-    regions <- focal(x, w=matrix(1, 3, 3), mape, na.rm=TRUE, padValue=NA)
-    regions[regions > change.threshold] <- NA
-    regions <- clump(regions)}
-  
-  if (method == 'temporal') {
-    regions <- calc(x, mape)
-    regions[regions < change.threshold] <- NA
-    regions <- clump(regions)}
   
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. return region image and region pixel frequency

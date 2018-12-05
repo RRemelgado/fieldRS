@@ -24,17 +24,19 @@
 #' 
 #' require(fieldRS)
 #' 
-#' data(fieldData) # ground truth data
+#' # ground truth data
+#' data(fieldData)
 #' 
+#' # label count check (original)
 #' unique.crop <- labelCheck(fieldData$crop)
-#' unique.crop$label.count.plot # label count (original)
+#' unique.crop$label.count.plot
 #' 
-#' nc <- c("wheat", "not-wheat", "not-wheat")) # new classes
+#' # new classes
+#' nc <- c("wheat", "not-wheat", "not-wheat"))
 #' 
-#' corrected.labels <- labelCheck(fieldData$crop, 
-#' unique.crop$labels, nc)
-#' 
-#' corrected.labels$label.count.plot # show label count
+#' # label correction
+#' corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, nc)
+#' corrected.labels$label.count.plot
 #' 
 #' }
 #' @seealso \code{\link{extractFields}}

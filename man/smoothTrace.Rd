@@ -25,18 +25,24 @@ valuesin \emph{x} and derives a \emph{SpatialPolygons} object.}
 \examples{
 {
 
+require(raster) 
+
 # read reference data
 data(fieldData)
 
 # extract centroids for each polygon
 cp <- spCentroid(fieldData)
 
-# build single polygon from centroid points
-p <- simpleTrace(cp)
+# build single polygon from centroid points (simple)
+p1 <- simpleTrace(cp)
+
+# build polygon from raster (smooth)
+p2 <- smoothTrace(rasterize(p1, raster(extent(p1), res=30, crs=crs(p1))), 1)
 
 # compare objects
-plot(p)
+plot(p1)
 points(cp, col="red")
+plot(p2, add=TRUE, border="blue")
 
 }
 }
