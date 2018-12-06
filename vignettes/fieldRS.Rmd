@@ -143,11 +143,11 @@ plot(seg.img)
 ```
 
 <p align="justify" style="line-height:200%;">
-Now we can `erosionFilter()` to remove small clumps that are likely related to mixed-pixels.
+Now we can `pixFilter()` to apply a erosion filter that removes small clumps likely related to mixed-pixels.
 </p>
 
 ```{r message=FALSE, eval=FALSE}
-seg.img <- erosionFilter(seg.img)
+seg.img <- pixeFilter(seg.img, "erosion")
 ```
 
 ``` {r echo=FALSE}
@@ -160,6 +160,19 @@ Finally, we will use `extractFields()` to derive polygons for each segment. This
 
 ``` {r message=FALSE}
 fields <- extractFields(seg.img)
+```
+
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
+plot(seg.img)
+plot(fields, border="red", add=TRUE)
+```
+
+<p align="justify" style="line-height:200%;">
+The default approach used by `extractFields()` to draw polygons is the convex hull method, implemented in the `chull()` function. This is named as the "simple" method in this function. Additionally, the function offers a "complex" approach that applies the concave hull method, implemented in the `concaveman()` function of the package with the same name. As shown below, the concave hull approach is a bit more precise. However, it is also more time consuming.
+</p>
+
+``` {r message=FALSE}
+fields <- extractFields(seg.img, method="complex")
 ```
 
 ``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}

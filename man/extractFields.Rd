@@ -4,14 +4,12 @@
 \alias{extractFields}
 \title{extractFields}
 \usage{
-extractFields(x, method = "chull", ...)
+extractFields(x, method = "simple")
 }
 \arguments{
 \item{x}{Object of class \emph{RasterLayer}.}
 
-\item{method}{One of "chull" or "smooth".}
-
-\item{...}{Further arguments to pass to \link{ccLabel}.}
+\item{method}{One of "simple" or "complex".}
 }
 \value{
 A \emph{SpatialPolygonsDataFrame}.
@@ -24,15 +22,16 @@ Extracts and vectorizes clumps of pixels with equal value within a raster object
 \link{ccLabel} and, draws polygons for each group of connected pixels. The way polygons are drawn 
 depends on the \emph{method} keyword. The function will accept one of the following options:
 \itemize{
-  \item{\emph{chull} - Extracts the center pixel coordinates and builds a polygon based on their minimum convex hull.}
-  \item{\emph{smooth} - Aggregates pixels to 2x the resolution to fill data gaps, disaggregates them to the original 
-  resolution, applies an erosion filter and converts the output to a polygon.}}
-Once this process is completed, the function derives a \emph{SpatialPolygonsDataFrame} reporting on:
+  \item{\emph{simple} - Extracts the center pixel coordinates and builds a polygon based on their minimum convex hull.}
+  \item{\emph{complex} - Extracts the center pixel coordinates and builds a polygon based on their minimum concave hull.}}
+  The "simple" approach is a faster but it can lead to poor results when dealing with very complex shapes. For example, crop 
+  fields can be rectangular in which case the "simple" method is sufficient. On the other hand, forest belts can have irregular 
+  shapes, in which case the "complex" method is more appropriate. The final output is a \emph{SpatialPolygonsDataFrame} reporting on:
 \itemize{
  \item{\emph{region.id} - Unique polygon identifier corresponding to the original pixel region.}
  \item{\emph{area} - Polygon Area (in square meters).}
  \item{\emph{perimeter} - Polygon perimeter (in meters).}
- \item{\emph{percent.cover} - Ration between the polygon area and the area of the corresponding pixels.}}}
+ \item{\emph{cover.ratio} - Ration between the polygon area and the area of the corresponding pixels.}}}
 }
 \examples{
 {
@@ -46,7 +45,7 @@ r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 or <- ccLabel(r[[1]], method="spatial", change.threshold=10)$regions
 
 # convert to polygons and plot
-ef <- extractFields(or[1:100,1:100, drop=FALSE])
+ef <- extractFields(or[1:50,1:50, drop=FALSE])
 plot(ef)
 
 }
