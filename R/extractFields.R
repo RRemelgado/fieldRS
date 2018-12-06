@@ -3,6 +3,7 @@
 #' @description Extracts and vectorizes clumps of pixels with equal value within a raster object.
 #' @param x Object of class \emph{RasterLayer}.
 #' @param method One of "simple" or "complex".
+#' @param smooth A logical argument.
 #' @return A \emph{SpatialPolygonsDataFrame}.
 #' @importFrom raster rasterToPoints res crs cellStats area crop freq
 #' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
@@ -17,7 +18,9 @@
 #'   \item{\emph{complex} - Extracts the center pixel coordinates and builds a polygon based on their minimum concave hull.}}
 #'   The "simple" approach is a faster but it can lead to poor results when dealing with very complex shapes. For example, crop 
 #'   fields can be rectangular in which case the "simple" method is sufficient. On the other hand, forest belts can have irregular 
-#'   shapes, in which case the "complex" method is more appropriate. The final output is a \emph{SpatialPolygonsDataFrame} reporting on:
+#'   shapes, in which case the "complex" method is more appropriate. By default, the function will use all pixels associated to a 
+#'   region. However, if \emph{smooth} is set to TRUE, for each region, the function will remove samples with less than 5 neighbors 
+#'   efectively removing isolated pixels along the edge of a region. The final output is a \emph{SpatialPolygonsDataFrame} reporting on:
 #' \itemize{
 #'  \item{\emph{region.id} - Unique polygon identifier corresponding to the original pixel region.}
 #'  \item{\emph{area} - Polygon Area (in square meters).}
@@ -33,9 +36,17 @@
 #' # spatial change labeling
 #' or <- ccLabel(r[[1]], method="spatial", change.threshold=10)$regions
 #' 
-#' # convert to polygons and plot
+#' # convert to polygons and plot (simple)
 #' ef <- extractFields(or[1:50,1:50, drop=FALSE])
 #' plot(ef)
+#' 
+#' # convert to polygons and plot (complex)
+#' ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex")
+#' plot(ef, border="red", add=TRUE)
+#' 
+#' # convert to polygons and plot (complex and smoothed)
+#' ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex", smooth=TRUE)
+#' plot(ef, border="blue", add=TRUE)
 #' 
 #' }
 #' @export
@@ -43,7 +54,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-extractFields <- function(x, method="simple") {
+extractFields <- function(x, method="simple", smooth=FALSE) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. Check input variables
@@ -64,6 +75,17 @@ extractFields <- function(x, method="simple") {
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
   
   rp <- rasterToPoints(x, fun=function(i) {!is.na(i)}, spatial=TRUE) # convert segmented raster to points
+  
+  # apply smoothing when prompted
+  if (smooth) {
+    x1 <- x > 0
+    x1[x1==0] <- NA
+    x1 <- focal(x1, matrix(1,3,3), relative.freq)
+    ev <- extract(x1, rp)
+    rp <- rp[which(ev > 0.5),]
+    rm(x1, ev)
+  }
+  
   uv <- unique(rp@data[,1]) # identify unique regions
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#

@@ -6,12 +6,16 @@
 =================================================================================
 
 ### New
-  * extractFields() offers multiple drawing options
+  * extractFields() offers multiple drawing options and includes smoothing
   * ecDistance now accepts matrices and data.frames
   * labelCheck() corrects labels automatically given a reference vector
   * poly2sample() preserves the unique identifiers of each polygon
   * ccLabel() allows positive/negative thresholds (informs if the output 
     should be higher or lower than the specified value)
+    
+### Changes
+  * "class_count" replaced by "richness" in "priority" argument within rankPlots()
+  * "diversity" added to "priority" argument within rankPlots()
 
 =================================================================================
 

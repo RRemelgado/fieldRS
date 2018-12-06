@@ -10,6 +10,7 @@
 #' @importFrom raster crop which.max crs
 #' @importFrom sp SpatialPoints
 #' @importFrom rgeos gDistance
+#' @importFrom spatialEco shannons
 #' @details {For each polygon in \emph{y}, the function will determine the distance between its centroid and
 #' the nearest road provided through \emph{z}, count the number of classes in \emph{x} and the number of patches
 #' of connected pixels and report on the proportion of non NA values. The patch count can be restricted to those
@@ -17,7 +18,8 @@
 #' will use this data to rank the elements of \emph{y} according to the order of the keywords in \emph{priority}.
 #' The user can choose one or more of the following keywords:
 #'  \itemize{
-#'  \item{\emph{class_count} - Priority given to the highest class count.}
+#'  \item{\emph{diversity} - Priority given to the highest Shannon, class diversity.}
+#'  \item{\emph{richness} - Priority given to the highest class richness (number of classes in plot / total number of classes).}
 #'  \item{\emph{pixel_frequency} - Priority given to the highest non-NA pixel count.}
 #'  \item{\emph{patch_count} - Priority given to the highest patch count.}
 #'  \item{\emph{road_distance} - Priority given to shortest distance.}}
@@ -26,9 +28,10 @@
 #'  \item{\emph{x} - Polygon centroid x coordinate.}
 #'  \item{\emph{y} - Polygon centroid y coordinate.}
 #'  \item{\emph{mape} - Mean Absolute Percent Error.}
-#'  \item{\emph{count} - Number of pixel regions.}
-#'  \item{\emph{frequency} - Number of non-NA pixels.}
-#'  \item{\emph{distance} - Linear distance to the closest road.}
+#'  \item{\emph{diversity} - Class diversity.}
+#'  \item{\emph{richness} - Class richeness.}
+#'  \item{\emph{pixel.frequency} - Number of non-NA pixels.}
+#'  \item{\emph{road.distance} - Linear distance to the closest road.}
 #'  \item{\emph{ranking} - Priority ranking}}}
 #' @seealso \code{\link{derivePlots}} \code{\link{ccLabel}}
 #' @examples {
@@ -63,7 +66,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_count', 'pixel_frequency', 'road_distance')) {
+rankPlots <- function(x, y, z, min.size=1, priority=c('diversity', 'richness', 'patch_count', 'pixel_frequency', 'road_distance')) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. check variables
@@ -73,10 +76,11 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
 
   # base image
   if (class(x)[1] != 'RasterLayer') {stop('"x" is not of a valid class')}
-  var.ls[[1]] <- 'class_count'
+  var.ls[[1]] <- 'diversity'
+  var.ls[[1]] <- 'richness'
   var.ls[[2]] <- 'patch_count'
   var.ls[[3]] <- 'pixel_frequency'
-
+  
   # pixel region size filter
   if (!is.numeric(min.size)) {stop('"min.size" is not numeric')}
   if (length(min.size) > 1) {stop('"min.size" has more than 1 element')}
@@ -97,21 +101,25 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
 
   # ranking
   if (!is.character(priority)) {stop('"priority" is not a character vector')}
-  if (sum(priority %in% c('class_count', 'pixel_frequency', 'patch_count', 'road_distance'))!=length(priority)) {
+  if (sum(priority %in% c('diversity', 'richness', 'pixel_frequency', 'patch_count', 'road_distance'))!=length(priority)) {
     stop('"priority" has one or more invalid keywords')}
   priority <- priority[priority %in% var.ls]
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 2. analyze plots
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
-
+  
+  nc <- length(unique(x)) # number of unique classes
   regions <- ccLabel(x)$regions # label regions
-
+  
   # statistics
   df.original <- do.call(rbind, lapply(1:length(y), function(j) {
     r <- crop(x, y[j,])
     i <- which.max(!is.na(r))
-    cc <- length(unique(r[i]))
+    a <- cellStats(!is.na(r), sum) # usable area
+    uv <- unique(r[i])
+    s <- shannons(as.data.frame(t(sapply(uv, function(u) {cellStats(r==u, sum, na.rm=TRUE)/a}))))$H
+    cr <- length(uv) / nc
     pf <- relative.freq(r[i])
     r <- crop(regions, y[j,])
     pc <- sum(freq(r)[,2] >= min.size)
@@ -120,9 +128,9 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
       dr <- SpatialPoints(cbind(d[1], d[2]), proj4string=crs(z))
       dr <- min(gDistance(dr, z, byid=TRUE))
     } else {dr <- NA}
-    return(data.frame(x=d[1], y=d[2], c1=cc, pc=pc, frequency=pf, distance=dr))}))
+    return(data.frame(x=d[1], y=d[2], si=s, c1=cr, pc=pc, frequency=pf, distance=dr))}))
 
-  colnames(df.original) <- c('x', 'y', 'class_count', 'patch_count', 'pixel_frequency', 'road_distance')
+  colnames(df.original) <- c('x', 'y', 'diversity', 'richness', 'patch_count', 'pixel_frequency', 'road_distance')
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. rank plots
@@ -136,7 +144,7 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('class_count', 'patch_coun
 
   # priority sorting
   df.original$ranking <- do.call(order, df.original[priority]) # rank
-  colnames(df.original) <- c('x', 'y', 'class count', 'patch count', 'frequency', 'distance', 'ranking')
+  colnames(df.original) <- c('x', 'y', 'diversity', 'richness', 'patch.count', 'pixel.frequency', 'road.distance', 'ranking')
 
   # return list with results
   return(df.original)
