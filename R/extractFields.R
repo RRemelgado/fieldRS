@@ -32,7 +32,7 @@
 #' or <- ccLabel(r[[1]], method="spatial", change.threshold=10)$regions
 #' 
 #' # convert to polygons and plot
-#' ef <- extractFields(or)
+#' ef <- extractFields(or[1:100,1:100, drop=FALSE])
 #' plot(ef)
 #' 
 #' }
