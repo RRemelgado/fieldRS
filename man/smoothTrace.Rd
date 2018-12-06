@@ -20,7 +20,7 @@ Outlines each unique element in a \emph{RasterLayer} and returns a \emph{Spatial
 \details{
 {Aggregates \emph{x} to a lower spatial resolution, with a factor defined by \emph{f}, an disaggregates 
 the output back to the native resolution. Finally, the function crops the output using the extent of the non-NA 
-valuesin \emph{x} and derives a \emph{SpatialPolygons} object.}
+values in \emph{x} and derives a \emph{SpatialPolygons} object.}
 }
 \examples{
 {

@@ -31,9 +31,9 @@ grid. If \emph{y} is a numeric element, the function will build a raster from th
 a resolution equal to \emph{y}. Sometimes, two or more polygons can cover the same pixel. When this happens, 
 the function will assign this pixel to each of the overlapping polygons and thus replicate this sample. When 
 we want to analyze each polygon individually this can be useful. However, if e.g. the polygons are all of same 
-class and we want to  avoid replicated samples, we can sert \emph{preserve.id} to FALSE. When doing so, the 
-funciton will identify all the unique pixels covered polygons and for, the duplicated it will sum the percent 
-cover values. Points with percent values below \emph{min.cover} will be ommited from the output.}
+class and we want to  avoid replicated samples, we can set \emph{preserve.id} to FALSE. When doing so, the 
+function will identify all the unique pixels covered polygons and for, the duplicated it will sum the percent 
+cover values. Points with percent values below \emph{min.cover} will be omitted from the output.}
 }
 \examples{
 {
