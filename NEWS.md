@@ -9,7 +9,7 @@
   * extractFields() offers multiple drawing options
   * added simpleTrace() and smoothTrace() to draw polygons from points/raster
   * ecDistance now accepts matrices and data.frames
-  * labelCheck() corrects labels automatically given a reference set
+  * labelCheck() corrects labels automatically given a reference vector
   * poly2sample() preserves the unique identifiers of each polygon
   * ccLabel() allows positive/negative thresholds (informs if the output 
     should be higher or lower than the specified value)
