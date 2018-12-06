@@ -78,7 +78,7 @@ extractFields <- function(x, method="simple") {
       ic <- chull(rp@coords[i,1:2])
       ic <- c(ic, ic[1])
       if (length(ic) >= 4) {
-        return(Polygons(list(Polygon(rp@coords[ic,1:2])), ID=u))
+        return(Polygons(list(Polygon(rp@coords[i[ic],1:2])), ID=u))
       } else {return(NULL)}})
     
   }
@@ -124,9 +124,9 @@ extractFields <- function(x, method="simple") {
   pixel.area <- pixel.area[1] * pixel.area[2] # pixel area
   
   # evaluate each polygon
-  shp@data$perimeter <- area(shp) # in m2
-  shp@data$area <- polyPerimeter(shp) # in m
-  shp@data$cover.ratio <- shp$area / (freq(x)[shp$region.id,2]*pixel.area) # polygon/region ratio
+  shp@data$area <- area(shp) # in m2
+  shp@data$arperimeter <- polyPerimeter(shp) # in m
+  shp@data$cover.ratio <- shp@data$area / (freq(x)[shp@data$region.id,2]*pixel.area) # polygon/region ratio
 
   return(shp)
 
