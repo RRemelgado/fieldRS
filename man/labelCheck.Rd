@@ -13,7 +13,7 @@ labelCheck(x, y, z, auto = FALSE)
 
 \item{z}{Vector of class \emph{character}.}
 
-\item{auto}{Logica argument. Default is FALSE.}
+\item{auto}{Logical argument. Default is FALSE.}
 }
 \value{
 A \emph{character} vector.
@@ -32,7 +32,7 @@ which a plot will be built. The final output consists of:
  \item{\emph{label.count} - Count of occurrences in \emph{unique.labels} per each element in \emph{x}.}
   \item{\emph{label.count.plot} - Plot of \emph{label.count}.}}
 If \emph{auto} is set to TRUE, the user can ignore \emph{z} to correct the existing labels. Instead, the 
-user can pprovide all the potential cases through \emph{y}. Then, for each element in \emph{x}, the function 
+user can provide all the potential cases through \emph{y}. Then, for each element in \emph{x}, the function 
 will return the most similar element in \emph{y} using the \code{\link[stringdist]{stringdist}} function.}
 }
 \seealso{
