@@ -11,7 +11,7 @@ pixFilter(x, y, method)
 
 \item{y}{A \emph{numeric} element.}
 
-\item{method}{A \emph{character} element. One of "erosion" or "dilation".}
+\item{method}{A \emph{character} element. One of "erode" or "dilate".}
 }
 \value{
 A \emph{RasterLayer}.

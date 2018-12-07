@@ -1,7 +1,7 @@
 ---
 title: "fieldRS - Tools for remote sensing field work"
 author: "Ruben Remelgado"
-date: "`r Sys.Date()`"
+date: "2018-12-07"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{fieldRS - Tools for remote sensing field work"}
@@ -9,23 +9,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-# load packages
-library(fieldRS)
-library(raster)
-library(ggplot2)
-library(knitr)
-library(kableExtra)
-library(RStoolbox)
-```
+
+
 
 
 ### Why develop fieldRS?
@@ -51,7 +38,8 @@ library(RStoolbox)
 Most data can be accessed with the `data()` function with the exception of the raster data. This is due to the fact that raster data is stored in the temporary memory when loaded and it can't be saved as an R object. Below we can see how to load each dataset into R.
 </p>
 
-``` {r message=FALSE}
+
+```r
 data(fieldData) # ground truth data
 data(roads) # road shapefile
 data(referenceProfiles) # target crop types NDVI profiles
@@ -65,23 +53,18 @@ ndvi.ts <- brick(system.file("extdata", "ndvi.tif", package="fieldRS")) # NDVI r
 When aiming for tasks such as land cover classification we try to sample from as many classes as possible in order to build a representative map. However, this is often made difficult by the lack of knowledge of the target area. When selecting sampling sites randomly, this lack of knowledge can lead us to visit homogeneous places that provide us with little information on the composition of the area we wish to classify. To help better select sampling sites we developed `rankPlots()`. This function uses raster and vector information to prioritize sampling sites based on certain, predefined criteria. As a basis, the function requires a equidistant grid that will define the potential sampling plots. To build this grid we can use the function `derivePlots()`. This function requires an object from which a spatial extent can be derived (e.g. *RasterLayer*, *SpatialPolygonsDataFrame*). Then, based on that extent, the function build a grid of square polygons where its size is predefined by the user. In this example, we will build a grid with 1x1 km polygons. Looking at the output - shown below - we can see that the borders or the image are not considered. This is because those areas result in sampling plots smaller that the target 1x1 km size.
 </p>
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-plot.grid <- derivePlots(fieldData, 1000)
-plot(ndvi.ts[[1]]) # plot 1st NDVI image
-plot(plot.grid, add=TRUE) # overlap sampling plot grid
-```
+<img src="figure/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="98%" style="display: block; margin: auto;" />
 
 <p align="justify" style="line-height:200%;">
 Additionally, `rankPlots()` requires raster information that provides an indication on the composition of the landscape. For example, the user can choose to use an existence land cover classification. However, when we don't have existent information at the spatial scale we wish to derive our own land cover map, it can be useful to build an unsupervised classification. To do this, we will use the `unsuperCLass()` function from the `RStoolbox` package. We will apply a K-means classifier over our NDVI time series and obtain a cluster image with 5 classes.
 </p>
 
-``` {r message=FALSE}
+
+```r
 k.img <- unsuperClass(ndvi.ts, nSamples=5000, nClasses=5)$map
 ```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-plot(k.img)
-```
+<img src="figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="98%" style="display: block; margin: auto;" />
 
 <p align="justify" style="line-height:200%;">
 `rankPlots()` will use this unsupervised classification to evaluate the potential land cover composition of the landscape. For each potential sampling plot, it will evaluate its fragmentation based on the number of pixel clumps and their size as well as the number of represented classes. As an additional criteria, `rankPlots()` will allow the inclusion of road information. In practice, the function will evaluate the distance between the closest road and the centre of the sampling plot. In this example, we can use the `roads` variable provided through `fieldRS`.
@@ -104,29 +87,145 @@ Now that we collected all the reference data, we can use `rankPlots()` to identi
 While the function offers a set of predefined sorting criteria, the user can re-arrange them. Let's show this in action through two test cases. In our first example, we will give priority to the class and patch count. In other words, we will priority the analysis of the unsupervised classification output. In our second example, we will prioritize the distance to the roads. The output will be added to the `plot.grid` shapefile we previously created.
 </p>
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-# example 1
-plot.grid_1 <- plot.grid
-plot.grid_1@data <- rankPlots(k.img, plot.grid, roads, priority=c('diversity', 'richness', 'patch_count', 'road_distance'))
-kable_styling(kable(head(plot.grid_1@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
+<table class="table table-responsive" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:center;"> x </th>
+   <th style="text-align:center;"> y </th>
+   <th style="text-align:center;"> diversity </th>
+   <th style="text-align:center;"> richness </th>
+   <th style="text-align:center;"> patch.count </th>
+   <th style="text-align:center;"> pixel.frequency </th>
+   <th style="text-align:center;"> road.distance </th>
+   <th style="text-align:center;"> ranking </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> 706114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.411955 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 53 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1845.245 </td>
+   <td style="text-align:center;"> 17 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 707114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.424322 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 46 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1876.150 </td>
+   <td style="text-align:center;"> 14 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 708114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.335536 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 32 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1840.659 </td>
+   <td style="text-align:center;"> 18 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 709114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.449922 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 39 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1916.704 </td>
+   <td style="text-align:center;"> 15 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 710114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.380475 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 40 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 2439.187 </td>
+   <td style="text-align:center;"> 9 </td>
+  </tr>
+</tbody>
+</table>
 
-# example 2
-plot.grid_2 <- plot.grid
-plot.grid_2@data <- rankPlots(k.img, plot.grid, roads, priority=c('road_distance', 'patch_count'))
-kable_styling(kable(head(plot.grid_2@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
-```
+<table class="table table-responsive" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:center;"> x </th>
+   <th style="text-align:center;"> y </th>
+   <th style="text-align:center;"> diversity </th>
+   <th style="text-align:center;"> richness </th>
+   <th style="text-align:center;"> patch.count </th>
+   <th style="text-align:center;"> pixel.frequency </th>
+   <th style="text-align:center;"> road.distance </th>
+   <th style="text-align:center;"> ranking </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> 706114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.411955 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 53 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1845.245 </td>
+   <td style="text-align:center;"> 14 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 707114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.424322 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 46 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1876.150 </td>
+   <td style="text-align:center;"> 15 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 708114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.335536 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 32 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1840.659 </td>
+   <td style="text-align:center;"> 13 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 709114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.449922 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 39 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 1916.704 </td>
+   <td style="text-align:center;"> 16 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 710114.8 </td>
+   <td style="text-align:center;"> 4484943 </td>
+   <td style="text-align:center;"> 1.380475 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 40 </td>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> 2439.187 </td>
+   <td style="text-align:center;"> 9 </td>
+  </tr>
+</tbody>
+</table>
 
 <p align="justify" style="line-height:200%;">
 Now let's plot and compare the output grids coloured by the ranking. Below we can see the output for example 1 (above) and example 2 (below).
 </p>
 
-```{r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-gp <- fortify(plot.grid_1, region="ranking")
-ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + geom_polygon() + scale_fill_continuous(name="Ranking")
-
-gp <- fortify(plot.grid_1, region="ranking")
-ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + geom_polygon() + scale_fill_continuous(name="Ranking")
-```
+<img src="figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="98%" style="display: block; margin: auto;" /><img src="figure/unnamed-chunk-7-2.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="98%" style="display: block; margin: auto;" />
 
 </br>
 
@@ -135,52 +234,46 @@ ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + geom_polyg
 Once we identify target sampling sites we can `fieldRS` to select concrete polygons to sample from. For example, if our aim is to map crop types, these polygons might coincide with field parcels. To extract these areas we are going to combine `ccLabel()`and `extractFields()`. `ccLabel()` will allow us to segment a raster image based on the difference between neighbouring pixels. The function will call the `mape()` function and, for each pixel, will estimate the Mean Absolute Percent Deviation (MAPE) between it and its immediate neighbours using a 3x3 moving window. After iterating through all the pixels in a raster image, the function will apply a user defined threshold to identify breaks between neighbouring field parcels and label each of them using the function `clump()` from the `raster` package. In this example, we will use a change threshold of 5%. This means that a pixel will be split from its neighbour if the difference between its value is equal or higher than 5% when compared against the mean estimated between itself and its neighbours. We will perform this analysis over a maximum NDVI composite estimate with `ndvi.ts`.
 </p>
 
-``` {r message=FALSE}
+
+```r
 ndvi.max <- calc(ndvi.ts, max, na.rm=TRUE) # derive maximum NDVI composite)
 seg.img <- ccLabel(ndvi.max, method="spatial", change.threshold=5)$regions # segment NDVI image
 ```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-plot(seg.img)
-```
+<img src="figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="98%" style="display: block; margin: auto;" />
 
 <p align="justify" style="line-height:200%;">
 Now we can `pixFilter()` to apply a erosion filter that removes small clumps likely related to mixed-pixels.
 </p>
 
-```{r message=FALSE, eval=FALSE}
-seg.img <- pixFilter(seg.img, 1, "erosion")
+
+```r
+seg.img <- pixeFilter(seg.img, "erosion")
 ```
 
-``` {r message=FALSE, echo=FALSE}
-seg.img <- raster(system.file("extdata", "segFilter.tif", package="fieldRS"))
-```
+
 
 <p align="justify" style="line-height:200%;">
 Finally, we will use `extractFields()` to derive polygons for each segment. This function will draw a polygon based on the extent of each segment. This can be useful when dealing with noisy images as the ones used in this example. However, as the plot below shows, the output might still require some manual editing.
 </p>
 
-``` {r message=FALSE}
+
+```r
 fields <- extractFields(seg.img)
 ```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-plot(seg.img)
-plot(fields, border="red", add=TRUE)
-```
+<img src="figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" width="98%" style="display: block; margin: auto;" />
 
 <p align="justify" style="line-height:200%;">
 The default approach used by `extractFields()` to draw polygons is the convex hull method, implemented in the `chull()` function. This is named as the "simple" method in this function. Additionally, the function offers a "complex" approach that applies the concave hull method, implemented in the `concaveman()` function of the package with the same name. As shown below, the concave hull approach is a bit more precise. However, it is also more time consuming.
 </p>
 
-``` {r message=FALSE}
+
+```r
 fields <- extractFields(seg.img, method="complex")
 ```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-plot(seg.img)
-plot(fields, border="red", add=TRUE)
-```
+<img src="figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" width="98%" style="display: block; margin: auto;" />
 
 </br>
 
@@ -189,29 +282,75 @@ plot(fields, border="red", add=TRUE)
 Once we collect our field data we will often notice some inconsistencies. This is quite common when collecting categorical data be it either due to misspellings or due to the occasional capitalization of labels. When processing the field data in platforms such as R, this can be problematic since misspelled words will be treated as new classes. To aid in solving such issues we developed `labelCheck()`. First, we provide the function with a vector of the original labels prompting the function to report on the unique classes and on their frequency distribution.
 </p>
 
-``` {r}
+
+```r
 unique.crop <- labelCheck(fieldData$crop)
 unique.crop$labels # show unique labels
+#> [1] "wheat"     "cotton"    "bare land"
 ```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-kable_styling(kable(head(unique.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
-plot(unique.crop$label.count.plot) # show label frequency plot
-```
+<table class="table table-responsive" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:center;"> count </th>
+   <th style="text-align:center;"> label </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> wheat </td>
+   <td style="text-align:center;"> 17 </td>
+   <td style="text-align:center;"> wheat </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> cotton </td>
+   <td style="text-align:center;"> 14 </td>
+   <td style="text-align:center;"> cotton </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> bare land </td>
+   <td style="text-align:center;"> 4 </td>
+   <td style="text-align:center;"> bare land </td>
+  </tr>
+</tbody>
+</table>
+
+<img src="figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="98%" style="display: block; margin: auto;" />
 
 <p align="justify" style="line-height:200%;">
 The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspellings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared against the unique labels reported by the function. This way, the slot `labels` will provide the corrected labels instead of the unique values. We can assign this output to the `fieldData`. Additionally, it will offer us a statistical account of the samples as done before based on the new classes.
 </p>
 
-``` {r}
+
+```r
 corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
 fieldData$crop_2 <- corrected.labels$labels
 ```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-kable_styling(kable(head(corrected.labels$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
-plot(corrected.labels$label.count.plot) # show label frequency plot
-```
+<table class="table table-responsive" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:center;"> count </th>
+   <th style="text-align:center;"> label </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> wheat </td>
+   <td style="text-align:center;"> 17 </td>
+   <td style="text-align:center;"> wheat </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> not-wheat </td>
+   <td style="text-align:center;"> 18 </td>
+   <td style="text-align:center;"> not-wheat </td>
+  </tr>
+</tbody>
+</table>
+
+<img src="figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="98%" style="display: block; margin: auto;" />
 
 </br>
 
@@ -220,34 +359,25 @@ plot(corrected.labels$label.count.plot) # show label frequency plot
 After collecting field data we need to translate it into usable samples. `fieldRS` offers tools to extract the pixels overlapping with the ground-truth data and evaluate their consistency. For example, if we are dealing with vectorized polygons, the pixels located along the borders of the polygons can be misleading. For example, if we are dealing with crop mapping, the spectral signature of border pixels can portrait neighbouring fields with different crop types. To aid on the selection of usable pixels we can use `poly2sample()`. For each polygon, the function will identify the overlapping pixels and, for each pixel, will quantify the percentage of its area that is overlapping with the polygon. Using this information, the user can easily ignore mixed pixels. In this example, we will prompt the function to filter out all the pixels with a percent cover lower than 50%.  
 </p>
 
-```{r message=FALSE, eval=FALSE}
+
+```r
 samples1 <- poly2sample(fieldData, seg.img, min.cover=50)
 ```
-```{r echo=FALSE}
-data(samples1)
-```
 
-```{r echo=FALSE, message=FALSE}
-r <- rasterize(fieldData, seg.img)
-samples1$id <- extract(r, samples1)
-samples1 <- samples1[!is.na(samples1$id),]
-rm(r)
-```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-ggplot(samples1@data, aes(x=x, y=y, color=cover)) + geom_point()
-```
+
+
+<img src="figure/unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" width="98%" style="display: block; margin: auto;" />
 
 <p align="justify" style="line-height:200%;">
 As an alternative, we might choose to label pixel clumps directly. In this case, we can use `raster2sample()`. This function is considerably faster than `poly2sample()`. For each pixel, it applies a 3x3 moving window to quantify the number of non-NA pixels. This can be useful to identify pure samples (i.e. pixels with values close to 1) as well as exclude samples that are likely related to mixed pixels (i.e. pixels with values close to 0).</p>
 
-```{r message=FALSE}
+
+```r
 samples2 <- raster2sample(seg.img)
 ```
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
-```
+<img src="figure/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" width="98%" style="display: block; margin: auto;" />
 
 </br>
 
@@ -256,7 +386,8 @@ ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
 Before we derive a classified map it can be useful to first visualize the performance of a predictive model using our training data. This can be useful to evaluate the need for more samples. But it also tells us something about the quality of our samples. Knowing which samples were not successfully predicted can point us in the direction of polygons that were poorly drawn or labelled. To address this need, we can use `classModel()`. This function provides a wrapper for the `train()` function of the `caret` package. Just as in `train()`, our function requires a `data.frame` with training data and a `numeric vector` with the target categorical/continuous variable. In addition, `classMove()` allows us to provide vector that groups the samples. This can be the unique identifier of each polygon that is associated to each sample as returned by `poly2sample()` and `raster2sample()`. Let's consider the output of the first. We will use `classModel()` with `Random Forest`classifier to classify the crop types in `fieldData` relabelled in a previous step (i.e. "wheat" and "no-wheat"). As predictors, we will use `ndvi.ts`. Given that this operation can be time consuming for a large amount of samples, we will average the samples for each polygon across each layer in `ndvi.ts` using `apply()`.
 </p>
 
-```{r eval=FALSE}
+
+```r
 predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
 ids <- unique(samples1$id) # polygon id's
 predictor.df <- do.call(rbind, lapply(ids, function(u) {
@@ -266,26 +397,30 @@ crop.types <- fieldData$crop_2[ids] # crop type vector
 predictive.model <- classModel(as.data.frame(predictor.df), crop.types, ids)
 ```
 
-```{r, echo=FALSE}
-predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
-ids <- unique(samples1$id) # polygon id's
-predictor.df <- do.call(rbind, lapply(ids, function(u) {
-  i <- which(samples1$id == u)
-  return(as.vector(apply(predictor.df[i,], 2, mean, na.rm=TRUE)))})) # summarize on field level
-crop.types <- fieldData$crop_2[ids] # crop type vector
-data(predictive.model1)
-data(predictive.model2)
 
-```
 
 ### Finding sampling mistakes through machine-learning
 <p align="justify" style="line-height:200%;">
 For each class, the function identified the corresponding polygons and iterated through each polygon keeping it for validation while using the remaining ones for training. Then, the function recorded if the class of this polygon was successfully predicted. Finally, for each class, the function derived an aggregated F1-score - based on all true and false positives and negatives - and reported on the accuracy of each polygon. Below we can see the results of this anlysis. polygons colored red in the plot weren't successfully predicted by the classifier.
 </p>
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
-kable_styling(kable(head(predictive.model2, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
-fieldData <- fieldData[ids,]
-plot(fieldData)
-plot(fieldData[!predictive.model1,], col="red", add=TRUE)
-```
+<table class="table table-responsive" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:center;"> class </th>
+   <th style="text-align:center;"> accuracy </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> wheat </td>
+   <td style="text-align:center;"> 0.8235294 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> not-wheat </td>
+   <td style="text-align:center;"> 0.5882353 </td>
+  </tr>
+</tbody>
+</table>
+
+<img src="figure/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="98%" style="display: block; margin: auto;" />

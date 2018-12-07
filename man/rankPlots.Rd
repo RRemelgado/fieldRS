@@ -4,7 +4,7 @@
 \alias{rankPlots}
 \title{rankPlots}
 \usage{
-rankPlots(x, y, z, min.size = 1, priority = c("class_count",
+rankPlots(x, y, z, min.size = 1, priority = c("diversity", "richness",
   "patch_count", "pixel_frequency", "road_distance"))
 }
 \arguments{
@@ -32,7 +32,8 @@ with a size greater \emph{min.size} which specifies the minimum number of pixels
 will use this data to rank the elements of \emph{y} according to the order of the keywords in \emph{priority}.
 The user can choose one or more of the following keywords:
  \itemize{
- \item{\emph{class_count} - Priority given to the highest class count.}
+ \item{\emph{diversity} - Priority given to the highest Shannon, class diversity.}
+ \item{\emph{richness} - Priority given to the highest class richness (number of classes in plot / total number of classes).}
  \item{\emph{pixel_frequency} - Priority given to the highest non-NA pixel count.}
  \item{\emph{patch_count} - Priority given to the highest patch count.}
  \item{\emph{road_distance} - Priority given to shortest distance.}}
@@ -41,9 +42,10 @@ The final output is a \emph{data.frame} reporting on:
  \item{\emph{x} - Polygon centroid x coordinate.}
  \item{\emph{y} - Polygon centroid y coordinate.}
  \item{\emph{mape} - Mean Absolute Percent Error.}
- \item{\emph{count} - Number of pixel regions.}
- \item{\emph{frequency} - Number of non-NA pixels.}
- \item{\emph{distance} - Linear distance to the closest road.}
+ \item{\emph{diversity} - Class diversity.}
+ \item{\emph{richness} - Class richeness.}
+ \item{\emph{pixel.frequency} - Number of non-NA pixels.}
+ \item{\emph{road.distance} - Linear distance to the closest road.}
  \item{\emph{ranking} - Priority ranking}}}
 }
 \examples{

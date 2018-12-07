@@ -56,9 +56,9 @@ seg.img <- ccLabel(ndvi.max, method="spatial", change.threshold=5)$regions # seg
 plot(seg.img)
 
 ## ----message=FALSE, eval=FALSE-------------------------------------------
-#  seg.img <- pixFilter(seg.img, 1, "erosion")
+#  seg.img <- pixeFilter(seg.img, "erosion")
 
-## ----message=FALSE, echo=FALSE-------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 seg.img <- raster(system.file("extdata", "segFilter.tif", package="fieldRS"))
 
 ## ----message=FALSE-------------------------------------------------------

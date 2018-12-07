@@ -19,7 +19,7 @@ NULL
 #' @keywords datasets
 #' @name fieldData
 #' @usage data(fieldData)
-#' @format A SpatialPointsDataFrame
+#' @format A SpatialPolygonsDataFrame
 NULL
 
 #' Reference profiles.
