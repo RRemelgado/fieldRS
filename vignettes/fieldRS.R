@@ -52,3 +52,12 @@ ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + geom_polyg
 ndvi.max <- calc(ndvi.ts, max, na.rm=TRUE) # derive maximum NDVI composite)
 seg.img <- ccLabel(ndvi.max, method="spatial", change.threshold=5)$regions # segment NDVI image
 
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+plot(seg.img)
+
+## ----message=FALSE, eval=FALSE-------------------------------------------
+#  seg.img <- pixFilter(seg.img, 1, "erosion")
+
+## ----message=FALSE, echo=FALSE-------------------------------------------
+seg.img <- raster(system.file("extdata", "segFilter.tif", package="fieldRS"))
+
