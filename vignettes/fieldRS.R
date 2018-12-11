@@ -68,3 +68,73 @@ fields <- extractFields(seg.img)
 plot(seg.img)
 plot(fields, border="red", add=TRUE)
 
+## ----message=FALSE-------------------------------------------------------
+fields <- extractFields(seg.img, method="complex")
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+plot(seg.img)
+plot(fields, border="red", add=TRUE)
+
+## ------------------------------------------------------------------------
+unique.crop <- labelCheck(fieldData$crop)
+unique.crop$labels # show unique labels
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+kable_styling(kable(head(unique.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
+plot(unique.crop$label.count.plot) # show label frequency plot
+
+## ------------------------------------------------------------------------
+corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
+fieldData$crop_2 <- corrected.labels$labels
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+kable_styling(kable(head(corrected.labels$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
+plot(corrected.labels$label.count.plot) # show label frequency plot
+
+## ----message=FALSE, eval=FALSE-------------------------------------------
+#  samples1 <- poly2sample(fieldData, seg.img, min.cover=50)
+
+## ----echo=FALSE----------------------------------------------------------
+data(samples1)
+
+## ----echo=FALSE, message=FALSE-------------------------------------------
+r <- rasterize(fieldData, seg.img)
+samples1$id <- extract(r, samples1)
+samples1 <- samples1[!is.na(samples1$id),]
+rm(r)
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+ggplot(samples1@data, aes(x=x, y=y, color=cover)) + geom_point()
+
+## ----message=FALSE-------------------------------------------------------
+samples2 <- raster2sample(seg.img)
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+ggplot(samples2@data, aes(x=x, y=y, color=cover)) + geom_point()
+
+## ----eval=FALSE----------------------------------------------------------
+#  predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
+#  ids <- unique(samples1$id) # polygon id's
+#  predictor.df <- do.call(rbind, lapply(ids, function(u) {
+#    i <- which(samples1$id == u)
+#    return(as.vector(apply(predictor.df[i,], 2, mean, na.rm=TRUE)))})) # summarize on field level
+#  crop.types <- fieldData$crop_2[ids] # crop type vector
+#  predictive.model <- classModel(as.data.frame(predictor.df), crop.types, ids)
+
+## ---- echo=FALSE---------------------------------------------------------
+predictor.df <- as.data.frame(extract(ndvi.ts, samples1)) # extracted values
+ids <- unique(samples1$id) # polygon id's
+predictor.df <- do.call(rbind, lapply(ids, function(u) {
+  i <- which(samples1$id == u)
+  return(as.vector(apply(predictor.df[i,], 2, mean, na.rm=TRUE)))})) # summarize on field level
+crop.types <- fieldData$crop_2[ids] # crop type vector
+data(predictive.model1)
+data(predictive.model2)
+
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+kable_styling(kable(head(predictive.model2, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
+fieldData <- fieldData[ids,]
+plot(fieldData)
+plot(fieldData[!predictive.model1,], col="red", add=TRUE)
+
