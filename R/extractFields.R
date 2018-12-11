@@ -19,7 +19,7 @@
 #'   The "simple" approach is a faster but it can lead to poor results when dealing with very complex shapes. For example, crop 
 #'   fields can be rectangular in which case the "simple" method is sufficient. On the other hand, forest belts can have irregular 
 #'   shapes, in which case the "complex" method is more appropriate. By default, the function will use all pixels associated to a 
-#'   region. However, if \emph{smooth} is set to TRUE, for each region, the function will remove samples with less than 5 neighbors 
+#'   region. However, if \emph{smooth.x} is set to TRUE, for each region, the function will remove samples with less than 5 neighbors 
 #'   efectively removing isolated pixels along the edge of a region. The final output is a \emph{SpatialPolygonsDataFrame} reporting on:
 #' \itemize{
 #'  \item{\emph{region.id} - Unique polygon identifier corresponding to the original pixel region.}
@@ -45,7 +45,7 @@
 #' plot(ef, border="red", add=TRUE)
 #' 
 #' # convert to polygons and plot (complex and smoothed)
-#' ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex", smooth=TRUE)
+#' ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex", smooth.x=TRUE)
 #' plot(ef, border="blue", add=TRUE)
 #' 
 #' }
