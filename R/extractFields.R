@@ -3,7 +3,7 @@
 #' @description Extracts and vectorizes clumps of pixels with equal value within a raster object.
 #' @param x Object of class \emph{RasterLayer}.
 #' @param method One of "simple" or "complex".
-#' @param smooth A logical argument.
+#' @param smooth.x A logical argument.
 #' @return A \emph{SpatialPolygonsDataFrame}.
 #' @importFrom raster rasterToPoints res crs cellStats area crop freq
 #' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
@@ -34,7 +34,7 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # spatial change labeling
-#' or <- ccLabel(r[[1]], method="spatial", change.threshold=10)$regions
+#' or <- ccLabel(r, method="temporal", change.threshold=50)$regions
 #' 
 #' # convert to polygons and plot (simple)
 #' ef <- extractFields(or[1:50,1:50, drop=FALSE])
@@ -54,7 +54,7 @@
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 
-extractFields <- function(x, method="simple", smooth=FALSE) {
+extractFields <- function(x, method="simple", smooth.x=FALSE) {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 1. Check input variables
@@ -62,7 +62,7 @@ extractFields <- function(x, method="simple", smooth=FALSE) {
 
   if (class(x)[1]!='RasterLayer') {stop('"x" is not of a valid class')}
   if (!method %in% c("simple", "complex")) {stop('"method" is not a valid keyword')}
-  
+  if (!is.logical(smooth.x)) {stop('"smooth.x" is not a logical argument')}
   
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 2. identify pixel clusters
@@ -77,7 +77,7 @@ extractFields <- function(x, method="simple", smooth=FALSE) {
   rp <- rasterToPoints(x, fun=function(i) {!is.na(i)}, spatial=TRUE) # convert segmented raster to points
   
   # apply smoothing when prompted
-  if (smooth) {
+  if (smooth.x) {
     x1 <- x > 0
     x1[x1==0] <- NA
     x1 <- focal(x1, matrix(1,3,3), relative.freq)

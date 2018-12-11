@@ -11,7 +11,7 @@ Description: In remote sensing, designing a field campaign to collect ground-tru
 Encoding: UTF-8
 LazyData: TRUE
 Imports: raster, sp, caret, ggplot2, grDevices, spatialEco, rgeos, stringdist, concaveman
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 License: GPL (>= 3)
 Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox
 VignetteBuilder: knitr
