@@ -61,3 +61,10 @@ plot(seg.img)
 ## ----message=FALSE, echo=FALSE-------------------------------------------
 seg.img <- raster(system.file("extdata", "segFilter.tif", package="fieldRS"))
 
+## ----message=FALSE-------------------------------------------------------
+fields <- extractFields(seg.img)
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+plot(seg.img)
+plot(fields, border="red", add=TRUE)
+
