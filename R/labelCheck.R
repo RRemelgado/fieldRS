@@ -78,7 +78,7 @@ labelCheck <- function(x, y, z, auto=FALSE) {
   # no correction needed (return unique values)
   if (!correct) {
     s.labels <- unique(x)
-    if (sum(is.na(s.labels)) > 0) {stop('NA values found in shapefile (please fix before proceeding)')}
+    if (sum(is.na(s.labels)) > 0) {stop('NA values found in "x" (please fix before proceeding)')}
     count <- data.frame(count=sapply(s.labels, function(l) {sum(x==l, na.rm=TRUE)}), label=unique(s.labels))
   }
   
