@@ -84,12 +84,24 @@ labelCheck <- function(x, y, z, auto=FALSE) {
   
   # correction needed (update original labels with corrected values)
   if (correct) {
+    
+    # make a copy of the original to reassign classes
     s.labels <- x
+    
+    # apply corrections for each element in z
     for (l in 1:length(y)) {
       i <- which(x == y[l])
       if (length(i) > 0) {s.labels[i] <- z[l]}}
-    count <- data.frame(count=sapply(unique(z), function(l) {sum(s.labels==l, na.rm=TRUE)}), label=unique(s.labels))
+    
+    # identify missing values (if existing, alert the user) 
+    s.labels[!s.labels %in% z] = 'NA'
+    if (sum(is.na(s.labels)) > 0) {warning('missing values found (!) not all elements in "x" are covered by "z"')}
+    
+    # count unique cases
+    count <- data.frame(count=sapply(unique(s.labels), function(l) {sum(s.labels==l, na.rm=TRUE)}), label=unique(s.labels))
   }
+  
+  rm(x) # remove original vector
   
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 # 3. derive plot with unique labels per
