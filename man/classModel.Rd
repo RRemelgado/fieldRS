@@ -21,7 +21,7 @@ classModel(x, y, z, mode = "classification", ...)
 A two element numeric \emph{vector}.
 }
 \description{
-Derives a predictive model for
+Derives a spatially-explicit predictive model as well as sample-wise validation.
 }
 \details{
 {Uses \link[caret]{train} to derive a predictive model based on \emph{x} - which contains the predictors - and \emph{y} - which

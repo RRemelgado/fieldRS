@@ -110,20 +110,21 @@ extractFields <- function(x, method="simple", smooth.x=FALSE) {
     # build polygons from convex hull
     pc <- lapply(uv, function(u) {
       i <- which(rp@data[,1]==u)
-      p <- concaveman(rp[i,])
-      t1 <- p@bbox[1,1]-p@bbox[1,2]
-      t2 <- p@bbox[2,1]-p@bbox[2,2]
-      if (t1 == 0 | t2 == 0) {return(NULL)} else {
-        p$region.id <- u
-        return(p)
-      }})
+      if (length(i) < 3) {return(NULL)} else {
+        p <- concaveman(rp[i,])
+        t1 <- p@bbox[1,1]-p@bbox[1,2]
+        t2 <- p@bbox[2,1]-p@bbox[2,2]
+        if (t1 == 0 | t2 == 0) {return(NULL)} else {
+          p$region.id <- u
+          return(p)
+      }}})
     
   }
   
-  # return clumped image if the are no polygons
+  # return clumped image if there are no polygons
   i <- sapply(pc, function(i) {!is.null(i)})
   if (sum(i) == 0) {
-    warning('unable to draw polygons, returning clumped image instead (have a look, there are no regions with more than 2 pixels)')
+    warning('unable to draw polygons, returning clumped image instead (there are no regions with more than 2 pixels)')
     return(x)}
   
   # remove NULL observations

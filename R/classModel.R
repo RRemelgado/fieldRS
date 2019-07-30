@@ -1,6 +1,6 @@
 #' @title classModel
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
-#' @description Derives a predictive model for
+#' @description Derives a spatially-explicit predictive model as well as sample-wise validation.
 #' @param x Object of class \emph{data.frame}.
 #' @param y A vector of class \emph{character} or \emph{numeric}.
 #' @param z A vector of class \emph{character} or \emph{numeric}.
