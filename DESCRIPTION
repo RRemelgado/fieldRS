@@ -2,7 +2,7 @@ Package: fieldRS
 Type: Package
 Title: Remote Sensing Field Work Tools
 Version: 0.2.2
-Date: 2019-07-29
+Date: 2020-05-27
 Authors@R: person("Ruben", "Remelgado", role = c("aut", "cre"), email="remelgado.ruben@gmail.com")
 URL: https://github.com/RRemelgado/fieldRS/
 BugReports: https://github.com/RRemelgado/fieldRS/issues/
@@ -10,7 +10,7 @@ Maintainer: Ruben Remelgado <remelgado.ruben@gmail.com>
 Description: In remote sensing, designing a field campaign to collect ground-truth data can be a challenging task. We need to collect representative samples while accounting for issues such as budget constraints and limited accessibility created by e.g. poor infrastructure. As suggested by Olofsson et al. (2014) <doi:10.1016/j.rse.2014.02.015>, this demands the establishment of best-practices to collect ground-truth data that avoid the waste of time and funds. 'fieldRS' addresses this issue by helping scientists and practitioners design field campaigns through the identification of priority sampling sites, the extraction of potential sampling plots and the conversion of plots into consistent training and validation samples that can be used in e.g. land cover classification.
 Encoding: UTF-8
 LazyData: TRUE
-Imports: raster, sp, caret, ggplot2, grDevices, spatialEco, rgeos, stringdist, concaveman
+Imports: raster, sp, caret, ggplot2, grDevices, geosphere, vegan, rgeos, stringdist, concaveman
 RoxygenNote: 6.1.1
 License: GPL (>= 3)
 Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox

@@ -7,7 +7,7 @@
 #' @return A \emph{SpatialPolygonsDataFrame}.
 #' @importFrom raster rasterToPoints res crs cellStats area crop freq
 #' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
-#' @importFrom spatialEco polyPerimeter
+#' @importFrom geosphere perimeter
 #' @importFrom concaveman concaveman
 #' @importFrom grDevices chull
 #' @details {Assuming \emph{x} is a classified or segmented image, this function segments it using 
@@ -148,7 +148,7 @@ extractFields <- function(x, method="simple", smooth.x=FALSE) {
   
   # evaluate each polygon
   shp@data$area <- area(shp) # in m2
-  shp@data$arperimeter <- polyPerimeter(shp) # in m
+  shp@data$arperimeter <- perimeter(shp) # in m
   shp@data$cover.ratio <- shp@data$area / (freq(x)[shp@data$region.id,2]*pixel.area) # polygon/region ratio
 
   return(shp)
