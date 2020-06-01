@@ -50,7 +50,7 @@
 #' uc <- unsuperClass(r, nSamples=5000, nClasses=5)$map
 #' 
 #' # derive potential sampling plots
-#' pp <- derivePlots(uc, 2000)
+#' pp <- derivePlots(uc, 1000)
 #' 
 #' # plot ranking
 #' pp@data <- rankPlots(uc, pp, roads)
