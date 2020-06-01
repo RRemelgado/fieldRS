@@ -4,7 +4,9 @@
 \name{fieldData}
 \alias{fieldData}
 \title{Polygon shapefile.}
-\format{A SpatialPolygonsDataFrame}
+\format{
+A SpatialPolygonsDataFrame
+}
 \usage{
 data(fieldData)
 }

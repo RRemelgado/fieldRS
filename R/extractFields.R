@@ -37,15 +37,15 @@
 #' or <- ccLabel(r, method="temporal", change.threshold=-50)$regions
 #' 
 #' # convert to polygons and plot (simple)
-#' ef <- extractFields(or[1:50,1:50, drop=FALSE])
+#' ef <- extractFields(or[10:30,10:30, drop=FALSE])
 #' plot(ef)
 #' 
 #' # convert to polygons and plot (complex)
-#' ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex")
+#' ef <- extractFields(or[10:30,1:30, drop=FALSE], method="complex")
 #' plot(ef, border="red", add=TRUE)
 #' 
 #' # convert to polygons and plot (complex and smoothed)
-#' ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex", smooth.x=TRUE)
+#' ef <- extractFields(or[10:30,1:30, drop=FALSE], method="complex", smooth.x=TRUE)
 #' plot(ef, border="blue", add=TRUE)
 #' 
 #' }
