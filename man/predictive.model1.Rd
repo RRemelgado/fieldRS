@@ -4,7 +4,9 @@
 \name{predictive.model1}
 \alias{predictive.model1}
 \title{Predictive classification model accuracy (class-wise)}
-\format{A logical vector.}
+\format{
+A logical vector.
+}
 \usage{
 data(predictive.model1)
 }

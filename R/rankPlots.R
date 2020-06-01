@@ -57,7 +57,7 @@
 #' 
 #' # plot output
 #' gp <- fortify(pp, region="ranking")
-#' ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + 
+#' ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(id))) + 
 #' geom_polygon() + scale_fill_continuous(name="Ranking")
 #' 
 #' }

@@ -4,7 +4,9 @@
 \name{referenceProfiles}
 \alias{referenceProfiles}
 \title{Reference profiles.}
-\format{A data.frame}
+\format{
+A data.frame
+}
 \usage{
 data(referenceProfiles)
 }

@@ -2,7 +2,7 @@ Package: fieldRS
 Type: Package
 Title: Remote Sensing Field Work Tools
 Version: 0.2.2
-Date: 2020-05-27
+Date: 2020-06-01
 Authors@R: person("Ruben", "Remelgado", role = c("aut", "cre"), email="remelgado.ruben@gmail.com")
 URL: https://github.com/RRemelgado/fieldRS/
 BugReports: https://github.com/RRemelgado/fieldRS/issues/
@@ -11,7 +11,7 @@ Description: In remote sensing, designing a field campaign to collect ground-tru
 Encoding: UTF-8
 LazyData: TRUE
 Imports: raster, sp, caret, ggplot2, grDevices, geosphere, vegan, rgeos, stringdist, concaveman
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 License: GPL (>= 3)
-Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox
+Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal, RStoolbox, foreign
 VignetteBuilder: knitr

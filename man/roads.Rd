@@ -4,7 +4,9 @@
 \name{roads}
 \alias{roads}
 \title{Road shapefile.}
-\format{A SpatialLinesDataFrame}
+\format{
+A SpatialLinesDataFrame
+}
 \usage{
 data(roads)
 }

@@ -34,7 +34,7 @@
 #' r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 #' 
 #' # spatial change labeling
-#' or <- ccLabel(r, method="temporal", change.threshold=50)$regions
+#' or <- ccLabel(r, method="temporal", change.threshold=-50)$regions
 #' 
 #' # convert to polygons and plot (simple)
 #' ef <- extractFields(or[1:50,1:50, drop=FALSE])
@@ -111,11 +111,12 @@ extractFields <- function(x, method="simple", smooth.x=FALSE) {
     pc <- lapply(uv, function(u) {
       i <- which(rp@data[,1]==u)
       if (length(i) < 3) {return(NULL)} else {
-        p <- concaveman(rp[i,])
-        t1 <- p@bbox[1,1]-p@bbox[1,2]
-        t2 <- p@bbox[2,1]-p@bbox[2,2]
+        p <- concaveman(rp@coords[i,])
+        e <- extent(p)
+        t1 <- e@xmax - e@xmin
+        t2 <- e@ymax - e@ymin
         if (t1 == 0 | t2 == 0) {return(NULL)} else {
-          p$region.id <- u
+          p <- Polygons(list(Polygon(p)), ID=u)
           return(p)
       }}})
     
@@ -132,8 +133,7 @@ extractFields <- function(x, method="simple", smooth.x=FALSE) {
   pc <- pc[i]
   
   # build polygons
-  if (method=="simple") {shp <- SpatialPolygonsDataFrame(SpatialPolygons(pc, proj4string=crs(x)), data.frame(region.id=uv), match.ID=FALSE)}
-  if (method=="complex") {shp <- do.call(rbind, pc)}
+  shp <- SpatialPolygonsDataFrame(SpatialPolygons(pc, proj4string=crs(x)), data.frame(region.id=uv), match.ID=FALSE)
   
   # remove temporary data
   rm(i, pc, uv, rp)

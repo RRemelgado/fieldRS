@@ -4,7 +4,9 @@
 \name{predictive.model2}
 \alias{predictive.model2}
 \title{Predictive classification model accuracy (overall)}
-\format{A data.frame}
+\format{
+A data.frame
+}
 \usage{
 data(predictive.model2)
 }

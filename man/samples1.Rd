@@ -4,7 +4,9 @@
 \name{samples1}
 \alias{samples1}
 \title{Pixel sample shapefile.}
-\format{A SpatialLinesDataFrame}
+\format{
+A SpatialLinesDataFrame
+}
 \usage{
 data(samples1)
 }

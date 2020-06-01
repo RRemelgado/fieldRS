@@ -4,8 +4,14 @@
 \alias{rankPlots}
 \title{rankPlots}
 \usage{
-rankPlots(x, y, z, min.size = 1, priority = c("diversity", "richness",
-  "patch_count", "pixel_frequency", "road_distance"))
+rankPlots(
+  x,
+  y,
+  z,
+  min.size = 1,
+  priority = c("diversity", "richness", "patch_count", "pixel_frequency",
+    "road_distance")
+)
 }
 \arguments{
 \item{x}{Object of class \emph{RasterLayer}, \emph{RasterStack} or \emph{RasterBrick}.}
@@ -72,7 +78,7 @@ pp@data <- rankPlots(uc, pp, roads)
 
 # plot output
 gp <- fortify(pp, region="ranking")
-ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + 
+ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(id))) + 
 geom_polygon() + scale_fill_continuous(name="Ranking")
 
 }
