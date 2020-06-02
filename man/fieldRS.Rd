@@ -4,3 +4,6 @@
 \name{fieldRS}
 \alias{fieldRS}
 \title{fieldRS.}
+\description{
+Example datasets of the fieldRS package
+}

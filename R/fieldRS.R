@@ -1,6 +1,7 @@
 #' fieldRS.
 #'
 #' @name fieldRS
+#' @description Example datasets of the fieldRS package
 #' @docType package
 #' @import raster sp
 NULL
