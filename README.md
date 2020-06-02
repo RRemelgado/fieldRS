@@ -19,7 +19,7 @@ The Department of Remote Sensing of the University of Würzburg has developed ot
 
 * <a href="https://bleutner.github.io/RStoolbox/">RStoolbox</a>
 * <a href="https://github.com/cran/moveVis/">moveVis</a>
-* <a href="https://github.com/RRemelgado/rsMove">fieldRS</a>
+* <a href="https://github.com/RRemelgado/rsMove">rsMove</a>
 * <a href="https://github.com/RRemelgado/CAWaR">CAWaR</a>
 
 <p align="justify" style="line-height:200%;">
